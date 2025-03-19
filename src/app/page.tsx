@@ -3,24 +3,18 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import {
-  PlusIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  MoonIcon,
-} from "@heroicons/react/20/solid";
+import { PlusIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import SideBar from "@/components/SideBar";
+import NoInvoice from "@/components/NoInvoice";
+import FilterComponent from "@/components/FilterComponent";
+import InvoiceForm from "@/components/InvoiceForm"; // Import the InvoiceForm component
+import { Invoice } from "@/types";
 
 export default function Home() {
-  interface Invoice {
-    id: string;
-    $id?: string;
-    paymentDue: string;
-    clientName: string;
-    total: number;
-    status: string;
-  }
-
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
+  const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
   // fetch invoices from API
   useEffect(() => {
@@ -32,6 +26,7 @@ export default function Home() {
         }
         const data = await response.json();
         setInvoices(data);
+        setFilteredInvoices(data); // Initialize filtered invoices with all invoices
       } catch (error) {
         console.error("Error fetching invoices:", error);
       }
@@ -68,43 +63,71 @@ export default function Home() {
     }
   };
 
+  // Function to handle opening the form for a new invoice
+  const handleOpenNewInvoiceForm = () => {
+    setSelectedInvoice(null); // Reset selected invoice
+    setShowInvoiceForm(true); // Show the form
+  };
+
+  // Function to handle closing the form
+  const handleCloseInvoiceForm = () => {
+    setShowInvoiceForm(false);
+  };
+
+  // Function to handle saving a new or updated invoice
+  const handleSaveInvoice = async (
+    updatedInvoice: Invoice,
+    saveAsDraft?: boolean
+  ) => {
+    try {
+      // Prepare the invoice for saving
+      const invoiceToSave = {
+        ...updatedInvoice,
+        status: saveAsDraft ? "draft" : "pending",
+      };
+
+      // API call to save the invoice
+      const response = await fetch("http://localhost:3001/api/invoices", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(invoiceToSave),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save invoice");
+      }
+
+      const savedInvoice = await response.json();
+
+      // Update the local state
+      if (selectedInvoice) {
+        // Update existing invoice
+        const updatedInvoices = invoices.map((inv) =>
+          inv.id === savedInvoice.id ? savedInvoice : inv
+        );
+        setInvoices(updatedInvoices);
+        setFilteredInvoices(updatedInvoices);
+      } else {
+        // Add new invoice
+        const newInvoices = [...invoices, savedInvoice];
+        setInvoices(newInvoices);
+        setFilteredInvoices(newInvoices);
+      }
+
+      // Close the form
+      setShowInvoiceForm(false);
+    } catch (error) {
+      console.error("Error saving invoice:", error);
+      // You might want to add error handling or user notification here
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="flex flex-col w-24 bg-gray-800">
-        <div className="flex items-center justify-center h-24 bg-purple-600 rounded-br-3xl">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-            <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
-              <svg
-                viewBox="0 0 28 24"
-                className="w-8 h-8 text-white"
-                fill="currentColor"
-              >
-                <path d="M10 20C10 22.2091 8.20914 24 6 24C3.79086 24 2 22.2091 2 20C2 17.7909 3.79086 16 6 16C8.20914 16 10 17.7909 10 20Z" />
-                <path d="M26 20C26 22.2091 24.2091 24 22 24C19.7909 24 18 22.2091 18 20C18 17.7909 19.7909 16 22 16C24.2091 16 26 17.7909 26 20Z" />
-                <path d="M8 10C8 13.3137 11.1863 16 14 16C16.8137 16 20 13.3137 20 10C20 6.68629 16.8137 4 14 4C11.1863 4 8 6.68629 8 10Z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-grow"></div>
-
-        <div className="flex items-center justify-center py-6 border-t border-gray-700">
-          <div className="text-gray-400">
-            <MoonIcon className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center py-6 border-t border-gray-700">
-          <div className="w-8 h-8 rounded-full overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt="Profile"
-            />
-          </div>
-        </div>
-      </div>
+      <SideBar />
 
       {/* Main content */}
       <div className="flex-1 overflow-y-auto px-8 py-12">
@@ -121,103 +144,88 @@ export default function Home() {
           <div>
             <h1 className="text-3xl font-bold text-gray-800">Invoices</h1>
             <p className="text-gray-500 mt-1">
-              {invoices.length > 0
-                ? `There are ${invoices.length} total invoices`
+              {filteredInvoices.length > 0
+                ? `There are ${filteredInvoices.length} total invoices`
                 : "No invoices"}
             </p>
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="flex items-center space-x-2 bg-white text-gray-700 px-4 py-2 rounded-3xl shadow">
-              <span>Filter by status</span>
-              <ChevronDownIcon className="w-4 h-4 text-purple-600" />
-            </button>
+            <FilterComponent
+              invoices={invoices}
+              setFilteredInvoices={setFilteredInvoices}
+            />
 
-            <button className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-3 rounded-3xl shadow">
+            <button
+              className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-3 rounded-3xl shadow"
+              onClick={handleOpenNewInvoiceForm}
+            >
               <PlusIcon className="w-4 h-4" />
               <span>New Invoice</span>
             </button>
           </div>
         </header>
 
-        {invoices.length > 0 ? (
+        {filteredInvoices.length > 0 ? (
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            {invoices.map(
-              (invoice, index) => (
-                console.log(invoice.id),
-                (
-                  <Link
-                    key={invoice.id || invoice.$id}
-                    href={`/invoice/${invoice.id}`}
-                    className={`flex items-center justify-between p-6 hover:bg-gray-50 cursor-pointer ${
-                      index !== invoices.length - 1
-                        ? "border-b border-gray-100"
-                        : ""
-                    }`}
-                  >
-                    <div className="flex items-center space-x-6">
-                      <span className="font-bold text-gray-500">
-                        #{invoice.id}
-                      </span>
-                      <span className="text-gray-500">
-                        Due {invoice.paymentDue}
-                      </span>
-                      <span className="text-gray-700">
-                        {invoice.clientName}
-                      </span>
-                    </div>
+            {filteredInvoices.map((invoice, index) => (
+              <Link
+                key={invoice.id || invoice.$id}
+                href={`/invoice/${invoice.id}`}
+                className={`flex items-center justify-between p-6 hover:bg-gray-50 cursor-pointer ${
+                  index !== filteredInvoices.length - 1
+                    ? "border-b border-gray-100"
+                    : ""
+                }`}
+              >
+                <div className="flex items-center space-x-6">
+                  <span className="font-bold text-gray-500">#{invoice.id}</span>
+                  <span className="text-gray-500">
+                    Due {invoice.paymentDue}
+                  </span>
+                  <span className="text-gray-700">{invoice.clientName}</span>
+                </div>
 
-                    <div className="flex items-center space-x-6">
-                      <span className="text-xl font-bold text-gray-800">
-                        {invoice.total?.toLocaleString("en-GB", {
-                          style: "currency",
-                          currency: "GBP",
-                        })}
-                      </span>
-                      <div
-                        className={`flex items-center space-x-2 px-4 py-2 rounded-md ${getStatusStyles(
-                          capitalizeFirstLetter(invoice.status)
-                        )}`}
-                      >
-                        <div
-                          className={`w-2 h-2 rounded-full ${getStatusDot(
-                            capitalizeFirstLetter(invoice.status)
-                          )}`}
-                        ></div>
-                        <span className="font-semibold">
-                          {capitalizeFirstLetter(invoice.status)}
-                        </span>
-                      </div>
-                      <ChevronRightIcon className="w-5 h-5 text-purple-600" />
-                    </div>
-                  </Link>
-                )
-              )
-            )}
+                <div className="flex items-center space-x-6">
+                  <span className="text-xl font-bold text-gray-800">
+                    {invoice.total?.toLocaleString("en-GB", {
+                      style: "currency",
+                      currency: "GBP",
+                    })}
+                  </span>
+                  <div
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md ${getStatusStyles(
+                      capitalizeFirstLetter(invoice.status)
+                    )}`}
+                  >
+                    <div
+                      className={`w-2 h-2 rounded-full ${getStatusDot(
+                        capitalizeFirstLetter(invoice.status)
+                      )}`}
+                    ></div>
+                    <span className="font-semibold">
+                      {capitalizeFirstLetter(invoice.status)}
+                    </span>
+                  </div>
+                  <ChevronRightIcon className="w-5 h-5 text-purple-600" />
+                </div>
+              </Link>
+            ))}
           </div>
         ) : (
-          <div className="p-8 flex flex-col items-center justify-center">
-            <div className="max-w-xs mb-6">
-              <img
-                alt="No invoices"
-                className="w-full"
-                src="/assets/illustration-empty.svg"
-                fetchPriority="low"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              There is nothing here
-            </h2>
-            <p className="text-gray-500 text-center mb-4">
-              Create an invoice by clicking the
-              <br />
-              New Invoice button and get started
-            </p>
-          </div>
+          <NoInvoice />
         )}
       </div>
+
+      {/* Invoice Form Component */}
+      {showInvoiceForm && (
+        <InvoiceForm
+          showForm={showInvoiceForm}
+          isNewInvoice={!selectedInvoice}
+          onClose={handleCloseInvoiceForm}
+          onSave={handleSaveInvoice}
+        />
+      )}
     </div>
   );
 }
