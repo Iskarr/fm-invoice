@@ -553,8 +553,11 @@ export default function InvoiceForm({
 
   // Validate the form and return true if valid, false otherwise
   const validateForm = (formData: Invoice, saveAsDraft: boolean): boolean => {
-    // Skip validation for drafts
-    if (saveAsDraft) return true;
+    // Clear all errors when saving as draft
+    if (saveAsDraft) {
+      setErrors({});
+      return true;
+    }
 
     const newErrors: FormErrors = {};
     let isValid = true;
@@ -683,7 +686,7 @@ export default function InvoiceForm({
 
     // Validate form if not saving as draft
     const isValid = validateForm(formData, saveAsDraft);
-    setShowErrors(true);
+    setShowErrors(!saveAsDraft); // Only show errors if not saving as draft
 
     if (!isValid) {
       // Scroll to the first error
