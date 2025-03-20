@@ -12,6 +12,248 @@ interface InvoiceFormProps {
   onSave: (updatedInvoice: Invoice, saveAsDraft?: boolean) => void;
 }
 
+// Define an interface for form errors
+interface FormErrors {
+  senderAddress?: {
+    street?: string;
+    city?: string;
+    postCode?: string;
+    country?: string;
+  };
+  clientName?: string;
+  clientEmail?: string;
+  clientAddress?: {
+    street?: string;
+    city?: string;
+    postCode?: string;
+    country?: string;
+  };
+  createdAt?: string;
+  description?: string;
+  items?: { name?: string; quantity?: string; price?: string }[];
+}
+
+// Form Field Component
+const FormField = ({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+}) => (
+  <div className="mb-3">
+    <div className="flex justify-between">
+      <label className="block text-sm text-gray-500 mb-1">{label}</label>
+      {error && <span className="text-red-500 text-xs">{error}</span>}
+    </div>
+    {children}
+  </div>
+);
+
+// Address Section Component
+const AddressSection = ({
+  title,
+  prefix,
+  address,
+  errors,
+  onChange,
+  formData,
+}: {
+  title: string;
+  prefix: string;
+  address: Address;
+  errors: any;
+  onChange: (
+    e: ChangeEvent<HTMLInputElement>,
+    section: string,
+    field: string
+  ) => void;
+  formData?: Invoice;
+}) => (
+  <div className="mb-6">
+    <h3 className="text-purple-600 font-medium mb-3">{title}</h3>
+
+    {prefix === "clientAddress" && (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        <FormField label="Client Name" error={errors?.clientName}>
+          <input
+            type="text"
+            name="clientName"
+            value={formData?.clientName || ""}
+            onChange={(e) => onChange(e, "", "")}
+            className={`w-full p-2 border ${
+              errors?.clientName
+                ? "border-red-500 error-field"
+                : "border-gray-200"
+            } rounded-md text-sm`}
+          />
+        </FormField>
+
+        <FormField label="Client Email" error={errors?.clientEmail}>
+          <input
+            type="email"
+            name="clientEmail"
+            value={formData?.clientEmail || ""}
+            onChange={(e) => onChange(e, "", "")}
+            className={`w-full p-2 border ${
+              errors?.clientEmail
+                ? "border-red-500 error-field"
+                : "border-gray-200"
+            } rounded-md text-sm`}
+          />
+        </FormField>
+      </div>
+    )}
+
+    <FormField label="Street Address" error={errors?.[prefix]?.street}>
+      <input
+        type="text"
+        name={`${prefix}Street`}
+        value={address?.street || ""}
+        onChange={(e) => onChange(e, prefix, "street")}
+        className={`w-full p-2 border ${
+          errors?.[prefix]?.street
+            ? "border-red-500 error-field"
+            : "border-gray-200"
+        } rounded-md text-sm`}
+      />
+    </FormField>
+
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      {["city", "postCode", "country"].map((field) => (
+        <FormField
+          key={field}
+          label={
+            field === "postCode"
+              ? "Post Code"
+              : field.charAt(0).toUpperCase() + field.slice(1)
+          }
+          error={errors?.[prefix]?.[field]}
+        >
+          <input
+            type="text"
+            name={`${prefix}${field.charAt(0).toUpperCase() + field.slice(1)}`}
+            value={address?.[field as keyof Address] || ""}
+            onChange={(e) => onChange(e, prefix, field)}
+            className={`w-full p-2 border ${
+              errors?.[prefix]?.[field]
+                ? "border-red-500 error-field"
+                : "border-gray-200"
+            } rounded-md text-sm`}
+          />
+        </FormField>
+      ))}
+    </div>
+  </div>
+);
+
+// Item List Component
+const ItemList = ({
+  items,
+  errors,
+  onItemChange,
+  onRemoveItem,
+  onAddItem,
+}: {
+  items: InvoiceItem[];
+  errors: any;
+  onItemChange: (
+    index: number,
+    field: keyof InvoiceItem,
+    value: string
+  ) => void;
+  onRemoveItem: (index: number) => void;
+  onAddItem: () => void;
+}) => (
+  <div className="mb-6">
+    <h3 className="text-lg font-bold text-gray-700 mb-3">Item List</h3>
+    <div className="grid grid-cols-12 text-xs text-gray-500 mb-2 px-2">
+      <div className="col-span-5">Item Name</div>
+      <div className="col-span-2 text-center">Qty.</div>
+      <div className="col-span-3 text-right">Price</div>
+      <div className="col-span-1 text-right">Total</div>
+      <div className="col-span-1"></div>
+    </div>
+
+    <div className="max-h-60 overflow-y-auto pr-1">
+      {items.map((item, index) => (
+        <div key={index} className="grid grid-cols-12 gap-1 mb-3 items-center">
+          <div className="col-span-5">
+            <input
+              type="text"
+              value={item.name}
+              onChange={(e) => onItemChange(index, "name", e.target.value)}
+              className={`w-full p-2 border ${
+                errors?.items?.[index]?.name
+                  ? "border-red-500 error-field"
+                  : "border-gray-200"
+              } rounded-md text-sm`}
+            />
+          </div>
+          <div className="col-span-2">
+            <input
+              type="number"
+              value={item.quantity}
+              onChange={(e) => onItemChange(index, "quantity", e.target.value)}
+              className={`w-full p-2 border ${
+                errors?.items?.[index]?.quantity
+                  ? "border-red-500 error-field"
+                  : "border-gray-200"
+              } rounded-md text-center text-sm`}
+              min="1"
+            />
+          </div>
+          <div className="col-span-3">
+            <input
+              type="number"
+              value={item.price}
+              onChange={(e) => onItemChange(index, "price", e.target.value)}
+              className={`w-full p-2 border ${
+                errors?.items?.[index]?.price
+                  ? "border-red-500 error-field"
+                  : "border-gray-200"
+              } rounded-md text-right text-sm`}
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <div className="col-span-1 text-right font-bold text-xs">
+            {(item.quantity * item.price).toFixed(2)}
+          </div>
+          <div className="col-span-1 text-center">
+            <button
+              type="button"
+              onClick={() => onRemoveItem(index)}
+              className="text-gray-500 hover:text-red-500"
+              disabled={items.length <= 1}
+            >
+              <XMarkIcon className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <button
+      type="button"
+      onClick={onAddItem}
+      className="w-full p-2 mt-3 bg-gray-100 text-purple-600 font-medium rounded-md hover:bg-gray-200 text-sm"
+    >
+      + Add New Item
+    </button>
+
+    {/* Add error messages below the button */}
+    {errors?.items && (
+      <div className="mt-4 text-red-500 text-sm">
+        <div>- All fields must be added</div>
+        <div>- An item must be added</div>
+      </div>
+    )}
+  </div>
+);
+
 export default function InvoiceForm({
   invoice,
   showForm,
@@ -23,15 +265,44 @@ export default function InvoiceForm({
   const [paymentTerms, setPaymentTerms] = useState<string>("Net 30 Days");
   const [animateForm, setAnimateForm] = useState<boolean>(false);
   const [animateOverlay, setAnimateOverlay] = useState<boolean>(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [showErrors, setShowErrors] = useState<boolean>(false);
+
+  // Helper to calculate payment due date string from a date string and days
+  const calculateDueDate = (dateString: string, days: number): string => {
+    // If no date string provided, return empty string
+    if (!dateString) return "";
+
+    // Simple string manipulation to add days to a date string (YYYY-MM-DD)
+    const parts = dateString.split("-");
+    if (parts.length !== 3) return "";
+
+    // Create temp date object just for calculation
+    const tempDate = new Date(
+      parseInt(parts[0]),
+      parseInt(parts[1]) - 1,
+      parseInt(parts[2])
+    );
+    tempDate.setDate(tempDate.getDate() + days);
+
+    // Convert back to string format
+    const year = tempDate.getFullYear();
+    const month = String(tempDate.getMonth() + 1).padStart(2, "0");
+    const day = String(tempDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
 
   // Initialize the form when opened
   useEffect(() => {
     if (isNewInvoice) {
-      // Create empty invoice template for new invoice
+      // Create empty invoice template for new invoice with today's date string
+      // const todayString = getTodayString();
+
       const newInvoice: Invoice = {
         id: generateInvoiceId(),
-        createdAt: new Date().toISOString().split("T")[0],
-        paymentDue: calculateDueDate(new Date(), 30),
+        createdAt: "",
+        paymentDue: calculateDueDate("", 30),
         description: "",
         paymentTerms: "Net 30 Days",
         clientName: "",
@@ -56,7 +327,7 @@ export default function InvoiceForm({
       setFormData(newInvoice);
       setPaymentTerms("Net 30 Days");
     } else if (invoice) {
-      // Use existing invoice for edit mode
+      // Use existing invoice for edit mode, keeping the dates as strings
       setFormData(invoice);
 
       // Set payment terms based on the invoice if available
@@ -64,6 +335,10 @@ export default function InvoiceForm({
         setPaymentTerms(invoice.paymentTerms);
       }
     }
+
+    // Reset errors when form is opened
+    setErrors({});
+    setShowErrors(false);
   }, [invoice, isNewInvoice, showForm]);
 
   // Handle form animations
@@ -107,6 +382,32 @@ export default function InvoiceForm({
   ) => {
     if (!formData) return;
 
+    // Clear error for this field when user starts typing
+    if (section && field) {
+      // Clear nested error
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        if (newErrors[section as keyof FormErrors]) {
+          const sectionErrors = {
+            ...(newErrors[section as keyof FormErrors] as Record<
+              string,
+              string
+            >),
+          };
+          delete sectionErrors[field];
+          newErrors[section as keyof FormErrors] = sectionErrors as any;
+        }
+        return newErrors;
+      });
+    } else {
+      // Clear top-level error
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[e.target.name as keyof FormErrors];
+        return newErrors;
+      });
+    }
+
     if (section && field) {
       // For nested objects like addresses
       if (section === "senderAddress" && formData.senderAddress) {
@@ -128,10 +429,29 @@ export default function InvoiceForm({
       }
     } else {
       // For top-level fields
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value,
-      });
+      const fieldName = e.target.name;
+      const value = e.target.value;
+
+      // If changing the date, also update the payment due date based on current terms
+      if (fieldName === "createdAt") {
+        const dateString = value; // Direct string from input
+
+        // Extract days from payment terms
+        const days = parseInt(paymentTerms.match(/\d+/)?.[0] || "30");
+        const newDueDate = calculateDueDate(dateString, days);
+
+        setFormData({
+          ...formData,
+          createdAt: dateString,
+          paymentDue: newDueDate,
+        });
+      } else {
+        // For all other fields
+        setFormData({
+          ...formData,
+          [fieldName]: value,
+        });
+      }
     }
   };
 
@@ -143,10 +463,9 @@ export default function InvoiceForm({
 
     // Update payment due date based on selected terms
     const days = parseInt(terms.match(/\d+/)?.[0] || "30");
-    const dueDate = calculateDueDate(
-      new Date(formData.createdAt || new Date()),
-      days
-    );
+
+    // Calculate due date from the current createdAt string
+    const dueDate = calculateDueDate(formData.createdAt || "", days);
 
     setFormData({
       ...formData,
@@ -161,6 +480,17 @@ export default function InvoiceForm({
     value: string
   ) => {
     if (!formData) return;
+
+    // Clear item error when user types
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      if (newErrors.items && newErrors.items[index]) {
+        const itemErrors = { ...newErrors.items[index] };
+        delete itemErrors[field as keyof typeof itemErrors];
+        newErrors.items[index] = itemErrors;
+      }
+      return newErrors;
+    });
 
     const newItems = [...formData.items];
     if (field === "quantity" || field === "price") {
@@ -203,6 +533,17 @@ export default function InvoiceForm({
       0
     );
 
+    // Remove errors for deleted item
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      if (newErrors.items) {
+        const itemsErrors = [...newErrors.items];
+        itemsErrors.splice(index, 1);
+        newErrors.items = itemsErrors;
+      }
+      return newErrors;
+    });
+
     setFormData({
       ...formData,
       items: newItems,
@@ -210,13 +551,155 @@ export default function InvoiceForm({
     });
   };
 
+  // Validate the form and return true if valid, false otherwise
+  const validateForm = (formData: Invoice, saveAsDraft: boolean): boolean => {
+    // Skip validation for drafts
+    if (saveAsDraft) return true;
+
+    const newErrors: FormErrors = {};
+    let isValid = true;
+
+    // Check sender address
+    if (!formData.senderAddress?.street) {
+      newErrors.senderAddress = {
+        ...newErrors.senderAddress,
+        street: "can't be empty",
+      };
+      isValid = false;
+    }
+    if (!formData.senderAddress?.city) {
+      newErrors.senderAddress = {
+        ...newErrors.senderAddress,
+        city: "can't be empty",
+      };
+      isValid = false;
+    }
+    if (!formData.senderAddress?.postCode) {
+      newErrors.senderAddress = {
+        ...newErrors.senderAddress,
+        postCode: "can't be empty",
+      };
+      isValid = false;
+    }
+    if (!formData.senderAddress?.country) {
+      newErrors.senderAddress = {
+        ...newErrors.senderAddress,
+        country: "can't be empty",
+      };
+      isValid = false;
+    }
+
+    // Check client details
+    if (!formData.clientName) {
+      newErrors.clientName = "can't be empty";
+      isValid = false;
+    }
+
+    if (!formData.clientEmail) {
+      newErrors.clientEmail = "can't be empty";
+      isValid = false;
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.clientEmail)) {
+      newErrors.clientEmail = "must be a valid email";
+      isValid = false;
+    }
+
+    // Check client address
+    if (!formData.clientAddress?.street) {
+      newErrors.clientAddress = {
+        ...newErrors.clientAddress,
+        street: "can't be empty",
+      };
+      isValid = false;
+    }
+    if (!formData.clientAddress?.city) {
+      newErrors.clientAddress = {
+        ...newErrors.clientAddress,
+        city: "can't be empty",
+      };
+      isValid = false;
+    }
+    if (!formData.clientAddress?.postCode) {
+      newErrors.clientAddress = {
+        ...newErrors.clientAddress,
+        postCode: "can't be empty",
+      };
+      isValid = false;
+    }
+    if (!formData.clientAddress?.country) {
+      newErrors.clientAddress = {
+        ...newErrors.clientAddress,
+        country: "can't be empty",
+      };
+      isValid = false;
+    }
+
+    // Check invoice details
+    if (!formData.createdAt) {
+      newErrors.createdAt = "can't be empty";
+      isValid = false;
+    }
+
+    if (!formData.description) {
+      newErrors.description = "can't be empty";
+      isValid = false;
+    }
+
+    // Check items
+    if (formData.items.length === 0) {
+      newErrors.items = [{}]; // Empty object to trigger error styling
+      isValid = false;
+    } else {
+      const itemErrors = formData.items.map((item) => {
+        const itemError: { name?: string; quantity?: string; price?: string } =
+          {};
+
+        if (!item.name || item.quantity <= 0 || item.price <= 0) {
+          // Just set empty strings to trigger error styling without messages
+          if (!item.name) itemError.name = "";
+          if (item.quantity <= 0) itemError.quantity = "";
+          if (item.price <= 0) itemError.price = "";
+          isValid = false;
+        }
+
+        return Object.keys(itemError).length > 0 ? itemError : undefined;
+      });
+      if (itemErrors.some((error) => error !== undefined)) {
+        newErrors.items = itemErrors.filter(
+          (
+            error
+          ): error is { name?: string; quantity?: string; price?: string } =>
+            error !== undefined
+        );
+      }
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e: FormEvent, saveAsDraft = false) => {
     e.preventDefault();
     if (!formData) return;
 
-    const finalInvoice = {
+    // Validate form if not saving as draft
+    const isValid = validateForm(formData, saveAsDraft);
+    setShowErrors(true);
+
+    if (!isValid) {
+      // Scroll to the first error
+      const firstErrorElement = document.querySelector(".error-field");
+      if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+      return;
+    }
+
+    // Use dates as they are - strings from the input
+    const formattedInvoice = {
       ...formData,
-      paymentTerms: paymentTerms,
       status: saveAsDraft
         ? "draft"
         : isNewInvoice
@@ -225,7 +708,7 @@ export default function InvoiceForm({
     };
 
     // Call the parent's onSave method with the updated invoice
-    onSave(finalInvoice, saveAsDraft);
+    onSave(formattedInvoice, saveAsDraft);
   };
 
   // Helper to generate random invoice ID
@@ -246,13 +729,6 @@ export default function InvoiceForm({
     }
 
     return id;
-  };
-
-  // Helper to calculate due date based on payment terms
-  const calculateDueDate = (date: Date, days: number): string => {
-    const dueDate = new Date(date);
-    dueDate.setDate(dueDate.getDate() + days);
-    return dueDate.toISOString().split("T")[0];
   };
 
   if (!showForm || !formData) {
@@ -298,181 +774,54 @@ export default function InvoiceForm({
         </div>
 
         <form onSubmit={(e) => handleSubmit(e)} className="p-4">
-          {/* Bill From */}
-          <div className="mb-6">
-            <h3 className="text-purple-600 font-medium mb-3">Bill From</h3>
+          <AddressSection
+            title="Bill From"
+            prefix="senderAddress"
+            address={
+              formData.senderAddress || {
+                street: "",
+                city: "",
+                postCode: "",
+                country: "",
+              }
+            }
+            errors={errors}
+            onChange={handleInputChange}
+            formData={formData}
+          />
 
-            <div className="mb-3">
-              <label className="block text-sm text-gray-500 mb-1">
-                Street Address
-              </label>
-              <input
-                type="text"
-                name="senderStreet"
-                value={formData.senderAddress?.street || ""}
-                onChange={(e) =>
-                  handleInputChange(e, "senderAddress", "street")
-                }
-                className="w-full p-2 border border-gray-200 rounded-md text-sm"
-              />
-            </div>
+          <AddressSection
+            title="Bill To"
+            prefix="clientAddress"
+            address={
+              formData.clientAddress || {
+                street: "",
+                city: "",
+                postCode: "",
+                country: "",
+              }
+            }
+            errors={errors}
+            onChange={handleInputChange}
+            formData={formData}
+          />
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <div>
-                <label className="block text-sm text-gray-500 mb-1">City</label>
-                <input
-                  type="text"
-                  name="senderCity"
-                  value={formData.senderAddress?.city || ""}
-                  onChange={(e) =>
-                    handleInputChange(e, "senderAddress", "city")
-                  }
-                  className="w-full p-2 border border-gray-200 rounded-md text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-500 mb-1">
-                  Post Code
-                </label>
-                <input
-                  type="text"
-                  name="senderPostCode"
-                  value={formData.senderAddress?.postCode || ""}
-                  onChange={(e) =>
-                    handleInputChange(e, "senderAddress", "postCode")
-                  }
-                  className="w-full p-2 border border-gray-200 rounded-md text-sm"
-                />
-              </div>
-              <div className="col-span-2 md:col-span-1">
-                <label className="block text-sm text-gray-500 mb-1">
-                  Country
-                </label>
-                <input
-                  type="text"
-                  name="senderCountry"
-                  value={formData.senderAddress?.country || ""}
-                  onChange={(e) =>
-                    handleInputChange(e, "senderAddress", "country")
-                  }
-                  className="w-full p-2 border border-gray-200 rounded-md text-sm"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Bill To */}
-          <div className="mb-6">
-            <h3 className="text-purple-600 font-medium mb-3">Bill To</h3>
-
-            <div className="mb-3">
-              <label className="block text-sm text-gray-500 mb-1">
-                Client's Name
-              </label>
-              <input
-                type="text"
-                name="clientName"
-                value={formData.clientName || ""}
-                onChange={(e) => handleInputChange(e)}
-                className="w-full p-2 border border-gray-200 rounded-md text-sm"
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="block text-sm text-gray-500 mb-1">
-                Client's Email
-              </label>
-              <input
-                type="email"
-                name="clientEmail"
-                value={formData.clientEmail || ""}
-                onChange={(e) => handleInputChange(e)}
-                className="w-full p-2 border border-gray-200 rounded-md text-sm"
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="block text-sm text-gray-500 mb-1">
-                Street Address
-              </label>
-              <input
-                type="text"
-                name="clientStreet"
-                value={formData.clientAddress?.street || ""}
-                onChange={(e) =>
-                  handleInputChange(e, "clientAddress", "street")
-                }
-                className="w-full p-2 border border-gray-200 rounded-md text-sm"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <div>
-                <label className="block text-sm text-gray-500 mb-1">City</label>
-                <input
-                  type="text"
-                  name="clientCity"
-                  value={formData.clientAddress?.city || ""}
-                  onChange={(e) =>
-                    handleInputChange(e, "clientAddress", "city")
-                  }
-                  className="w-full p-2 border border-gray-200 rounded-md text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-500 mb-1">
-                  Post Code
-                </label>
-                <input
-                  type="text"
-                  name="clientPostCode"
-                  value={formData.clientAddress?.postCode || ""}
-                  onChange={(e) =>
-                    handleInputChange(e, "clientAddress", "postCode")
-                  }
-                  className="w-full p-2 border border-gray-200 rounded-md text-sm"
-                />
-              </div>
-              <div className="col-span-2 md:col-span-1">
-                <label className="block text-sm text-gray-500 mb-1">
-                  Country
-                </label>
-                <input
-                  type="text"
-                  name="clientCountry"
-                  value={formData.clientAddress?.country || ""}
-                  onChange={(e) =>
-                    handleInputChange(e, "clientAddress", "country")
-                  }
-                  className="w-full p-2 border border-gray-200 rounded-md text-sm"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Invoice Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-            <div>
-              <label className="block text-sm text-gray-500 mb-1">
-                Invoice Date
-              </label>
+            <FormField label="Invoice Date" error={errors.createdAt}>
               <input
                 type="date"
                 name="createdAt"
-                value={
-                  formData.createdAt
-                    ? new Date(formData.createdAt).toISOString().split("T")[0]
-                    : ""
-                }
-                onChange={(e) => handleInputChange(e)}
-                className="w-full p-2 border border-gray-200 rounded-md text-sm"
+                value={formData.createdAt}
+                onChange={handleInputChange}
+                className={`w-full p-2 border ${
+                  errors.createdAt
+                    ? "border-red-500 error-field"
+                    : "border-gray-200"
+                } rounded-md text-sm`}
               />
-            </div>
+            </FormField>
 
-            <div>
-              <label className="block text-sm text-gray-500 mb-1">
-                Payment Terms
-              </label>
+            <FormField label="Payment Terms">
               <select
                 name="paymentTerms"
                 value={paymentTerms}
@@ -484,99 +833,32 @@ export default function InvoiceForm({
                 <option value="Net 14 Days">Net 14 Days</option>
                 <option value="Net 30 Days">Net 30 Days</option>
               </select>
-            </div>
+            </FormField>
 
             <div className="col-span-1 md:col-span-2">
-              <label className="block text-sm text-gray-500 mb-1">
-                Project Description
-              </label>
-              <input
-                type="text"
-                name="description"
-                value={formData.description || ""}
-                onChange={(e) => handleInputChange(e)}
-                className="w-full p-2 border border-gray-200 rounded-md text-sm"
-              />
+              <FormField label="Project Description" error={errors.description}>
+                <input
+                  type="text"
+                  name="description"
+                  value={formData.description || ""}
+                  onChange={handleInputChange}
+                  className={`w-full p-2 border ${
+                    errors.description
+                      ? "border-red-500 error-field"
+                      : "border-gray-200"
+                  } rounded-md text-sm`}
+                />
+              </FormField>
             </div>
           </div>
 
-          {/* Item List */}
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-gray-700 mb-3">Item List</h3>
-
-            <div className="grid grid-cols-12 text-xs text-gray-500 mb-2 px-2">
-              <div className="col-span-5">Item Name</div>
-              <div className="col-span-2 text-center">Qty.</div>
-              <div className="col-span-3 text-right">Price</div>
-              <div className="col-span-1 text-right">Total</div>
-              <div className="col-span-1"></div>
-            </div>
-
-            <div className="max-h-60 overflow-y-auto pr-1">
-              {formData.items &&
-                formData.items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-12 gap-1 mb-3 items-center"
-                  >
-                    <div className="col-span-5">
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) =>
-                          handleItemChange(index, "name", e.target.value)
-                        }
-                        className="w-full p-2 border border-gray-200 rounded-md text-sm"
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          handleItemChange(index, "quantity", e.target.value)
-                        }
-                        className="w-full p-2 border border-gray-200 rounded-md text-center text-sm"
-                        min="1"
-                      />
-                    </div>
-                    <div className="col-span-3">
-                      <input
-                        type="number"
-                        value={item.price}
-                        onChange={(e) =>
-                          handleItemChange(index, "price", e.target.value)
-                        }
-                        className="w-full p-2 border border-gray-200 rounded-md text-right text-sm"
-                        min="0"
-                        step="0.01"
-                      />
-                    </div>
-                    <div className="col-span-1 text-right font-bold text-xs">
-                      {(item.quantity * item.price).toFixed(2)}
-                    </div>
-                    <div className="col-span-1 text-center">
-                      <button
-                        type="button"
-                        onClick={() => removeItem(index)}
-                        className="text-gray-500 hover:text-red-500"
-                        disabled={formData.items.length <= 1}
-                      >
-                        <XMarkIcon className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={addNewItem}
-              className="w-full p-2 mt-3 bg-gray-100 text-purple-600 font-medium rounded-md hover:bg-gray-200 text-sm"
-            >
-              + Add New Item
-            </button>
-          </div>
+          <ItemList
+            items={formData.items}
+            errors={errors}
+            onItemChange={handleItemChange}
+            onRemoveItem={removeItem}
+            onAddItem={addNewItem}
+          />
 
           <div className="flex justify-between mt-4 sticky bottom-0 bg-white p-3 border-t">
             <button

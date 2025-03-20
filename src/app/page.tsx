@@ -1,6 +1,6 @@
 "use client";
 // pages/index.js
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { PlusIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
@@ -15,28 +15,56 @@ export default function Home() {
   const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
   const [showInvoiceForm, setShowInvoiceForm] = useState<boolean>(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // fetch invoices from API
-  useEffect(() => {
-    const fetchInvoices = async () => {
-      try {
-        const response = await fetch("http://localhost:3001/api/invoices");
-        if (!response.ok) {
-          throw new Error("Failed to fetch invoices");
-        }
-        const data = await response.json();
-        setInvoices(data);
-        setFilteredInvoices(data); // Initialize filtered invoices with all invoices
-      } catch (error) {
-        console.error("Error fetching invoices:", error);
+  // Create a reusable function to fetch invoices
+  const fetchInvoices = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:3001/api/invoices");
+      if (!response.ok) {
+        throw new Error("Failed to fetch invoices");
       }
-    };
-
-    fetchInvoices();
+      const data = await response.json();
+      setInvoices(data);
+      setFilteredInvoices(data); // Update filtered invoices as well
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+      setIsLoading(false);
+    }
   }, []);
 
+  // fetch invoices from API on initial load
+  useEffect(() => {
+    fetchInvoices();
+  }, [fetchInvoices]);
+
   function capitalizeFirstLetter(str: string) {
+    if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // Function to format date to YY-MM-DD
+  function formatShortDate(dateString: string) {
+    if (!dateString) return "";
+
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString; // Return original if invalid
+
+      // Get year as 2-digit
+      const year = date.getFullYear().toString().slice(-2);
+      // Get month with leading zero if needed
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      // Get day with leading zero if needed
+      const day = date.getDate().toString().padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString; // Return original on error
+    }
   }
 
   const getStatusStyles = (status: any) => {
@@ -87,37 +115,28 @@ export default function Home() {
       };
 
       // API call to save the invoice
-      const response = await fetch("http://localhost:3001/api/invoices", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(invoiceToSave),
-      });
+      const response = await fetch(
+        "http://localhost:3001/api/invoices/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(invoiceToSave),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to save invoice");
       }
 
-      const savedInvoice = await response.json();
-
-      // Update the local state
-      if (selectedInvoice) {
-        // Update existing invoice
-        const updatedInvoices = invoices.map((inv) =>
-          inv.id === savedInvoice.id ? savedInvoice : inv
-        );
-        setInvoices(updatedInvoices);
-        setFilteredInvoices(updatedInvoices);
-      } else {
-        // Add new invoice
-        const newInvoices = [...invoices, savedInvoice];
-        setInvoices(newInvoices);
-        setFilteredInvoices(newInvoices);
-      }
+      const result = await response.json();
 
       // Close the form
       setShowInvoiceForm(false);
+
+      // Refresh the invoice data after successful save
+      fetchInvoices();
     } catch (error) {
       console.error("Error saving invoice:", error);
       // You might want to add error handling or user notification here
@@ -159,6 +178,7 @@ export default function Home() {
             <button
               className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-3 rounded-3xl shadow"
               onClick={handleOpenNewInvoiceForm}
+              disabled={isLoading}
             >
               <PlusIcon className="w-4 h-4" />
               <span>New Invoice</span>
@@ -166,11 +186,15 @@ export default function Home() {
           </div>
         </header>
 
-        {filteredInvoices.length > 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+        ) : filteredInvoices.length > 0 ? (
           <div className="bg-white rounded-lg shadow overflow-hidden">
             {filteredInvoices.map((invoice, index) => (
               <Link
-                key={invoice.id || invoice.$id}
+                key={invoice.id}
                 href={`/invoice/${invoice.id}`}
                 className={`flex items-center justify-between p-6 hover:bg-gray-50 cursor-pointer ${
                   index !== filteredInvoices.length - 1
@@ -181,7 +205,7 @@ export default function Home() {
                 <div className="flex items-center space-x-6">
                   <span className="font-bold text-gray-500">#{invoice.id}</span>
                   <span className="text-gray-500">
-                    Due {invoice.paymentDue}
+                    Due {formatShortDate(invoice.paymentDue)}
                   </span>
                   <span className="text-gray-700">{invoice.clientName}</span>
                 </div>

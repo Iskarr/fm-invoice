@@ -52,11 +52,41 @@ export default function DetailPage({ params }: InvoiceIdProps) {
   const handleMarkAsPaid = async () => {
     console.log("Mark as paid");
     // Implementation would go here
+    try {
+      const response = await fetch(`http://localhost:3001/api/invoices/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: "paid" }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to mark as paid");
+      }
+      router.push("/");
+    } catch (error) {
+      console.error("Error marking as paid:", error);
+    }
   };
 
   const handleDelete = async () => {
-    console.log("Delete invoice");
+    // confirm delete
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this invoice?"
+    );
+    if (!confirmDelete) return;
     // Implementation would go here
+    try {
+      const response = await fetch(`http://localhost:3001/api/invoices/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete invoice");
+      }
+      router.push("/");
+    } catch (error) {
+      console.error("Error deleting invoice:", error);
+    }
   };
 
   const handleEditClick = () => {
@@ -68,21 +98,20 @@ export default function DetailPage({ params }: InvoiceIdProps) {
   };
 
   const handleSaveInvoice = async (updatedInvoice: Invoice) => {
+    // Implement the API call to update the invoice
     console.log("Saving changes", updatedInvoice);
-
-    // Here you would implement the API call to update the invoice
     try {
-      // For demonstration purposes, we're just updating the local state
-      // In a real application, you would make an API call here
-
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Close the form
-      setShowEditForm(false);
-
-      // Update the invoice state with the edited version
-      setInvoice(updatedInvoice);
+      const response = await fetch(`http://localhost:3001/api/invoices/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedInvoice),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update invoice");
+      }
+      router.push("/");
     } catch (error) {
       console.error("Error updating invoice:", error);
     }
@@ -124,11 +153,18 @@ export default function DetailPage({ params }: InvoiceIdProps) {
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    const date = new Date(dateString);
+    // Force UTC interpretation to avoid timezone issues
+    const utcDate = new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1)
+    );
+
+    // Format as MM-DD-YYYY
+    const month = String(utcDate.getMonth() + 1).padStart(2, "0");
+    const day = String(utcDate.getDate()).padStart(2, "0");
+    const year = utcDate.getFullYear();
+
+    return `${month}-${day}-${year}`;
   };
 
   if (loading) {
