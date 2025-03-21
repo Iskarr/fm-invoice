@@ -17,6 +17,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showEditForm, setShowEditForm] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   // use effect to fetch from localhost:3001/api/invoices/:id
   useEffect(() => {
@@ -70,12 +71,10 @@ export default function DetailPage({ params }: InvoiceIdProps) {
   };
 
   const handleDelete = async () => {
-    // confirm delete
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this invoice?"
-    );
-    if (!confirmDelete) return;
-    // Implementation would go here
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
       const response = await fetch(`http://localhost:3001/api/invoices/${id}`, {
         method: "DELETE",
@@ -447,6 +446,37 @@ export default function DetailPage({ params }: InvoiceIdProps) {
           onClose={handleCloseEditForm}
           onSave={handleSaveInvoice}
         />
+      )}
+
+      {showDeleteModal && (
+        <>
+          <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
+          <div className="fixed inset-0 flex items-center justify-center z-50 px-6">
+            <div className="bg-white rounded-lg max-w-md w-full p-8">
+              <h2 className="text-2xl font-bold text-[#0C0E16] mb-2">
+                Confirm Deletion
+              </h2>
+              <p className="text-[#888EB0] mb-6">
+                Are you sure you want to delete invoice #{id}? This action
+                cannot be undone.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-6 py-4 text-[#7E88C3] bg-[#F9FAFE] hover:bg-[#DFE3FA] rounded-3xl font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="px-6 py-4 text-white bg-[#EC5757] hover:bg-[#FF9797] rounded-3xl font-bold"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
