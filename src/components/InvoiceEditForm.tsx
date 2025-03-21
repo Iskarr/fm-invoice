@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { XMarkIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { Invoice, InvoiceItem } from "@/types";
 
 interface InvoiceEditFormProps {
@@ -196,16 +196,23 @@ export default function InvoiceEditForm({
           opacity: animateForm ? 1 : 0,
         }}
       >
-        <div className="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10">
+        {/* Mobile Go Back button */}
+        <div className="md:hidden p-4 bg-white sticky top-0 z-10">
+          <button
+            type="button"
+            onClick={handleCloseEditForm}
+            className="flex items-center text-[#7C5DFA] font-bold"
+          >
+            <ChevronLeftIcon className="w-5 h-5 mr-2" />
+            Go back
+          </button>
+        </div>
+
+        {/* Header */}
+        <div className="flex justify-between items-center p-4 bg-white sticky top-0 md:top-0 z-10">
           <h2 className="text-lg md:text-xl font-bold text-gray-800">
             Edit <span className="text-purple-600">#{editedInvoice.id}</span>
           </h2>
-          <button
-            onClick={handleCloseEditForm}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-4">
@@ -490,14 +497,26 @@ export default function InvoiceEditForm({
             </button>
           </div>
 
-          <div className="flex justify-between mt-4 sticky bottom-0 bg-white p-3 border-t">
+          {/* Desktop Go Back button */}
+          <div className="hidden md:flex justify-between mt-4 sticky bottom-0 bg-white p-3">
             <button
               type="button"
               onClick={handleCloseEditForm}
-              className="px-4 py-2 bg-gray-200 text-gray-600 rounded-3xl text-sm"
+              className="flex items-center text-[#7C5DFA] font-bold"
             >
-              Cancel
+              <ChevronLeftIcon className="w-5 h-5 mr-2" />
+              Go back
             </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-purple-600 text-white rounded-3xl text-sm"
+            >
+              Save Changes
+            </button>
+          </div>
+
+          {/* Mobile Save Changes button */}
+          <div className="md:hidden flex justify-end mt-4 sticky bottom-0 bg-white p-3">
             <button
               type="submit"
               className="px-4 py-2 bg-purple-600 text-white rounded-3xl text-sm"

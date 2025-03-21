@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { XMarkIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { Invoice, InvoiceItem, Address } from "@/types";
 
 interface InvoiceFormProps {
@@ -739,7 +739,7 @@ export default function InvoiceForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex overflow-hidden ml-16">
+    <div className="fixed inset-0 z-50 flex overflow-hidden">
       {/* Light gray overlay with fade effect */}
       <div
         className="absolute inset-0 transition-opacity duration-300 ease-in-out"
@@ -752,28 +752,29 @@ export default function InvoiceForm({
 
       {/* Form Container - Responsive width */}
       <div
-        className="pl-8 relative bg-white shadow-lg w-full max-w-md md:max-w-lg lg:max-w-2xl h-screen overflow-y-auto transform transition-all duration-300 ease-in-out z-10"
+        className="top-0 bg-white shadow-lg w-full max-w-md md:max-w-lg lg:max-w-xl h-screen overflow-y-auto transform transition-all duration-300 ease-in-out z-10"
         style={{
           transform: animateForm ? "translateX(0)" : "translateX(-100%)",
           opacity: animateForm ? 1 : 0,
         }}
       >
-        <div className="flex justify-between items-center p-4 border-b bg-white sticky top-0 z-10">
-          <h2 className="text-lg md:text-xl font-bold text-gray-800">
-            {isNewInvoice ? (
-              "New Invoice"
-            ) : (
-              <>
-                Edit <span className="text-purple-600">#{formData.id}</span>
-              </>
-            )}
-          </h2>
+        {/* Mobile Go Back button */}
+        <div className="p-4 bg-white sticky top-0 z-10">
           <button
+            type="button"
             onClick={handleCloseForm}
-            className="text-gray-500 hover:text-gray-700"
+            className="flex items-center text-[#7C5DFA] font-bold"
           >
-            <XMarkIcon className="w-6 h-6" />
+            <ChevronLeftIcon className="w-5 h-5 mr-2" />
+            Go back
           </button>
+        </div>
+
+        {/* Header */}
+        <div className="flex justify-between items-center p-4 bg-white sticky top-[56px] z-10">
+          <h2 className="text-lg md:text-xl font-bold text-gray-800">
+            New Invoice
+          </h2>
         </div>
 
         <form onSubmit={(e) => handleSubmit(e)} className="p-4">
@@ -792,7 +793,6 @@ export default function InvoiceForm({
             onChange={handleInputChange}
             formData={formData}
           />
-
           <AddressSection
             title="Bill To"
             prefix="clientAddress"
@@ -808,7 +808,6 @@ export default function InvoiceForm({
             onChange={handleInputChange}
             formData={formData}
           />
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
             <FormField label="Invoice Date" error={errors.createdAt}>
               <input
@@ -854,7 +853,6 @@ export default function InvoiceForm({
               </FormField>
             </div>
           </div>
-
           <ItemList
             items={formData.items}
             errors={errors}
@@ -863,30 +861,54 @@ export default function InvoiceForm({
             onAddItem={addNewItem}
           />
 
-          <div className="flex justify-between mt-4 sticky bottom-0 bg-white p-3 border-t">
+          {/* Desktop Go Back and action buttons */}
+          <div className="hidden md:flex justify-end mt-4 sticky bottom-0 bg-white p-3">
+            <div className="flex space-x-2">
+              <button
+                type="button"
+                onClick={handleCloseForm}
+                className="px-4 py-2 bg-[#F9FAFE] text-[#7E88C3] rounded-3xl text-sm hover:bg-[#DFE3FA]"
+              >
+                Discard
+              </button>
+              <button
+                type="button"
+                onClick={(e) => handleSubmit(e, true)}
+                className="px-4 py-2 bg-[#373B53] text-white rounded-3xl text-sm hover:bg-[#0C0E16]"
+              >
+                Save as Draft
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-[#7C5DFA] text-white rounded-3xl text-sm hover:bg-[#9277FF]"
+              >
+                Save & Send
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile action buttons */}
+          <div className="md:hidden flex flex-wrap gap-2 mt-4 sticky bottom-0 bg-white p-3">
             <button
               type="button"
               onClick={handleCloseForm}
-              className="px-4 py-2 bg-gray-200 text-gray-600 rounded-3xl text-sm"
+              className="px-4 py-2 bg-[#F9FAFE] text-[#7E88C3] rounded-3xl text-sm hover:bg-[#DFE3FA]"
             >
-              {isNewInvoice ? "Discard" : "Cancel"}
+              Discard
             </button>
-
-            <div className="flex space-x-2">
-              {isNewInvoice && (
-                <button
-                  type="button"
-                  onClick={(e) => handleSubmit(e, true)}
-                  className="px-4 py-2 bg-gray-700 text-white rounded-3xl text-sm"
-                >
-                  Save as Draft
-                </button>
-              )}
+            <div className="flex gap-2 ml-auto">
+              <button
+                type="button"
+                onClick={(e) => handleSubmit(e, true)}
+                className="px-4 py-2 bg-[#373B53] text-white rounded-3xl text-sm hover:bg-[#0C0E16]"
+              >
+                Save as Draft
+              </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-purple-600 text-white rounded-3xl text-sm"
+                className="px-4 py-2 bg-[#7C5DFA] text-white rounded-3xl text-sm hover:bg-[#9277FF]"
               >
-                {isNewInvoice ? "Save & Send" : "Save Changes"}
+                Save & Send
               </button>
             </div>
           </div>

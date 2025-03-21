@@ -7,7 +7,7 @@ import { PlusIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import SideBar from "@/components/SideBar";
 import NoInvoice from "@/components/NoInvoice";
 import FilterComponent from "@/components/FilterComponent";
-import InvoiceForm from "@/components/InvoiceForm"; // Import the InvoiceForm component
+import NewInvoiceForm from "@/components/NewInvoiceForm"; // Import the InvoiceForm component
 import { Invoice } from "@/types";
 
 export default function Home() {
@@ -145,11 +145,10 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <SideBar />
 
       {/* Main content */}
-      <div className="flex-1 overflow-y-auto px-8 py-12">
+      <div className="flex-1 overflow-y-auto px-6 md:px-8 py-8 md:py-12 mt-20 md:mt-0 lg:mt-0">
         <Head>
           <title>Invoices Dashboard</title>
           <meta
@@ -161,27 +160,31 @@ export default function Home() {
 
         <header className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Invoices</h1>
-            <p className="text-gray-500 mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+              Invoices
+            </h1>
+            <p className="text-sm md:text-base text-gray-500 mt-1">
               {filteredInvoices.length > 0
-                ? `There are ${filteredInvoices.length} total invoices`
+                ? `${filteredInvoices.length} invoices`
                 : "No invoices"}
             </p>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <FilterComponent
               invoices={invoices}
               setFilteredInvoices={setFilteredInvoices}
             />
 
             <button
-              className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-3 rounded-3xl shadow"
+              className="flex items-center space-x-2 bg-purple-600 text-white px-2 md:px-4 py-2 md:py-3 rounded-3xl shadow"
               onClick={handleOpenNewInvoiceForm}
               disabled={isLoading}
             >
-              <PlusIcon className="w-4 h-4" />
-              <span>New Invoice</span>
+              <div className="flex items-center justify-center w-8 h-8 bg-white rounded-full">
+                <PlusIcon className="w-4 h-4 text-purple-600" />
+              </div>
+              <span className="text-sm md:text-base">New Invoice</span>
             </button>
           </div>
         </header>
@@ -191,47 +194,93 @@ export default function Home() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
           </div>
         ) : filteredInvoices.length > 0 ? (
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            {filteredInvoices.map((invoice, index) => (
+          <div className="space-y-4">
+            {filteredInvoices.map((invoice) => (
               <Link
                 key={invoice.id}
                 href={`/invoice/${invoice.id}`}
-                className={`flex items-center justify-between p-6 hover:bg-gray-50 cursor-pointer ${
-                  index !== filteredInvoices.length - 1
-                    ? "border-b border-gray-100"
-                    : ""
-                }`}
+                className="block bg-white rounded-lg shadow hover:bg-gray-50 cursor-pointer"
               >
-                <div className="flex items-center space-x-6">
-                  <span className="font-bold text-gray-500">#{invoice.id}</span>
-                  <span className="text-gray-500">
-                    Due {formatShortDate(invoice.paymentDue)}
-                  </span>
-                  <span className="text-gray-700">{invoice.clientName}</span>
-                </div>
+                {/* Mobile Layout (default) */}
+                <div className="flex flex-col space-y-6 p-6 md:hidden">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-gray-500">
+                      <span className="text-gray-500">#</span>
+                      {invoice.id}
+                    </span>
+                    <span className="text-gray-500">{invoice.clientName}</span>
+                  </div>
 
-                <div className="flex items-center space-x-6">
-                  <span className="text-xl font-bold text-gray-800">
-                    {invoice.total?.toLocaleString("en-GB", {
-                      style: "currency",
-                      currency: "GBP",
-                    })}
-                  </span>
-                  <div
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-md ${getStatusStyles(
-                      capitalizeFirstLetter(invoice.status)
-                    )}`}
-                  >
+                  <div className="flex justify-between items-center">
+                    <div className="flex flex-col space-y-2">
+                      <span className="text-gray-500">
+                        Due {formatShortDate(invoice.paymentDue)}
+                      </span>
+                      <span className="text-xl font-bold text-gray-800">
+                        {invoice.total?.toLocaleString("en-GB", {
+                          style: "currency",
+                          currency: "GBP",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                    </div>
+
                     <div
-                      className={`w-2 h-2 rounded-full ${getStatusDot(
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-md ${getStatusStyles(
                         capitalizeFirstLetter(invoice.status)
                       )}`}
-                    ></div>
-                    <span className="font-semibold">
-                      {capitalizeFirstLetter(invoice.status)}
-                    </span>
+                    >
+                      <div
+                        className={`w-2 h-2 rounded-full ${getStatusDot(
+                          capitalizeFirstLetter(invoice.status)
+                        )}`}
+                      ></div>
+                      <span className="font-semibold">
+                        {capitalizeFirstLetter(invoice.status)}
+                      </span>
+                    </div>
                   </div>
-                  <ChevronRightIcon className="w-5 h-5 text-purple-600" />
+                </div>
+
+                {/* Tablet/Desktop Layout */}
+                <div className="hidden md:flex items-center justify-between p-6">
+                  <div className="flex items-center space-x-6">
+                    <span className="font-bold text-gray-500">
+                      <span className="text-gray-500">#</span>
+                      {invoice.id}
+                    </span>
+                    <span className="text-gray-500">
+                      Due {formatShortDate(invoice.paymentDue)}
+                    </span>
+                    <span className="text-gray-500">{invoice.clientName}</span>
+                  </div>
+
+                  <div className="flex items-center space-x-6">
+                    <span className="text-xl font-bold text-gray-800 w-[140px] text-right">
+                      {invoice.total?.toLocaleString("en-GB", {
+                        style: "currency",
+                        currency: "GBP",
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </span>
+                    <div
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-md min-w-[104px] justify-center ${getStatusStyles(
+                        capitalizeFirstLetter(invoice.status)
+                      )}`}
+                    >
+                      <div
+                        className={`w-2 h-2 rounded-full ${getStatusDot(
+                          capitalizeFirstLetter(invoice.status)
+                        )}`}
+                      ></div>
+                      <span className="font-semibold">
+                        {capitalizeFirstLetter(invoice.status)}
+                      </span>
+                    </div>
+                    <ChevronRightIcon className="w-5 h-5 text-purple-600" />
+                  </div>
                 </div>
               </Link>
             ))}
@@ -243,7 +292,7 @@ export default function Home() {
 
       {/* Invoice Form Component */}
       {showInvoiceForm && (
-        <InvoiceForm
+        <NewInvoiceForm
           showForm={showInvoiceForm}
           isNewInvoice={!selectedInvoice}
           onClose={handleCloseInvoiceForm}
