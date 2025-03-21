@@ -777,7 +777,10 @@ export default function InvoiceForm({
           </h2>
         </div>
 
-        <form onSubmit={(e) => handleSubmit(e)} className="p-4">
+        <form
+          onSubmit={(e) => handleSubmit(e)}
+          className="p-4 md:pb-4 pb-0 relative"
+        >
           <AddressSection
             title="Bill From"
             prefix="senderAddress"
@@ -888,28 +891,32 @@ export default function InvoiceForm({
           </div>
 
           {/* Mobile action buttons */}
-          <div className="md:hidden flex flex-wrap gap-2 mt-4 sticky bottom-0 bg-white p-3">
-            <button
-              type="button"
-              onClick={handleCloseForm}
-              className="px-4 py-2 bg-[#F9FAFE] text-[#7E88C3] rounded-3xl text-sm hover:bg-[#DFE3FA]"
-            >
-              Discard
-            </button>
-            <div className="flex gap-2 ml-auto">
-              <button
-                type="button"
-                onClick={(e) => handleSubmit(e, true)}
-                className="px-4 py-2 bg-[#373B53] text-white rounded-3xl text-sm hover:bg-[#0C0E16]"
-              >
-                Save as Draft
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[#7C5DFA] text-white rounded-3xl text-sm hover:bg-[#9277FF]"
-              >
-                Save & Send
-              </button>
+          <div className="md:hidden w-[calc(100%+32px)] flex flex-wrap gap-2 sticky bottom-0 bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.1)] -ml-4">
+            <div className="w-full p-6">
+              <div className="flex w-full justify-between">
+                <button
+                  type="button"
+                  onClick={handleCloseForm}
+                  className="px-4 py-2 bg-[#F9FAFE] text-[#7E88C3] rounded-3xl text-sm hover:bg-[#DFE3FA] cursor-pointer"
+                >
+                  Discard
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, true)}
+                    className="px-4 py-2 bg-[#373B53] text-white rounded-3xl text-sm hover:bg-[#0C0E16] cursor-pointer"
+                  >
+                    Save as Draft
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-[#7C5DFA] text-white rounded-3xl text-sm hover:bg-[#9277FF] cursor-pointer"
+                  >
+                    Save & Send
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </form>
