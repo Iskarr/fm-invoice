@@ -1,1 +1,74 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;700&display=swap");
+
+:root {
+  /* Primary Colors */
+  --primary-1: #7c5dfa;
+  --primary-2: #9277ff;
+
+  /* Dark Colors */
+  --dark-1: #1e2139;
+  --dark-2: #252945;
+  --dark-3: #373b53;
+  --dark-4: #0c0e16;
+
+  /* Gray Colors */
+  --gray-1: #888eb0;
+  --gray-2: #7e88c3;
+  --gray-3: #dfe3fa;
+  --gray-4: #f8f8fb;
+
+  /* Accent/Status Colors */
+  --accent-red: #ec5757;
+  --accent-red-light: #ff9797;
+  --accent-green: #33d69f;
+  --accent-orange: #ff8f00;
+}
+
+body {
+  font-family: "League Spartan", sans-serif;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.delete-button {
+  background-color: var(--accent-red);
+}
+
+.delete-button:hover {
+  background-color: var(--accent-red-light);
+}
+
+.edit-button {
+  background-color: var(--gray-3);
+}
+
+.edit-button:hover {
+  background-color: var(--gray-4);
+}
+
+.mark-paid-button {
+  background-color: var(--primary-1);
+}
+
+.mark-paid-button:hover {
+  background-color: var(--primary-2);
+}
+
+.go-back-button {
+  color: var(--dark-4);
+}
+
+.go-back-button:hover {
+  color: var(--gray-2);
+}
+
+.filter-button {
+  color: var(--dark-4);
+}
+
+.filter-button:hover {
+  color: red;
+}

@@ -1,17 +1,17 @@
 "use client";
 import { MoonIcon } from "@heroicons/react/20/solid";
 
-const SideBar = () => {
+const Navbar = () => {
   return (
     <div
-      className="fixed z-40 top-0 left-0 right-0 w-full h-20 flex flex-row justify-between bg-gray-800
+      className="fixed z-40 top-0 left-0 right-0 w-full h-20 flex flex-row justify-between bg-(--dark-2)
       lg:left-0 lg:top-0 lg:bottom-0 lg:w-24 lg:h-screen lg:flex-col lg:rounded-br-3xl lg:rounded-tr-2xl"
     >
       {/* Logo Section */}
       <div
         className="flex items-center justify-center h-full w-24 
         lg:h-24 lg:w-full lg:rounded-br-2xl lg:rounded-tr-2xl 
-        bg-purple-600 relative overflow-hidden"
+        bg-(--primary-1) relative overflow-hidden"
       >
         <img src="/assets/logo.svg" alt="logo" className="w-12 h-auto z-10" />
         <div
@@ -69,4 +69,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default Navbar;

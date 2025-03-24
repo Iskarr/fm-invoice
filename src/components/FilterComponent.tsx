@@ -81,34 +81,38 @@ const FilterComponent = ({
       {isOpen && (
         <div className="absolute mt-2 w-48 bg-white rounded-lg shadow-lg p-4 z-10">
           {statuses.map((status) => (
-            <label
+            <div
               key={status.value}
-              className="flex items-center space-x-3 py-2 cursor-pointer"
+              className="py-2 cursor-pointer"
+              onClick={() => handleStatusToggle(status.value)}
             >
-              <div
-                className={`w-4 h-4 border rounded flex items-center justify-center ${
-                  selectedStatuses.includes(status.value)
-                    ? "border-purple-600 bg-purple-600"
-                    : "border-gray-300"
-                }`}
-                onClick={() => handleStatusToggle(status.value)}
-              >
-                {selectedStatuses.includes(status.value) && (
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path d="M5 13l4 4L19 7"></path>
-                  </svg>
-                )}
-              </div>
-              <span className="text-sm">{status.label}</span>
-            </label>
+              <label className="flex items-center space-x-3 w-full cursor-pointer">
+                <div
+                  className={`w-4 h-4 bg-(--gray-3) rounded flex items-center justify-center ${
+                    selectedStatuses.includes(status.value)
+                      ? "border-[#7C5DFA] bg-(--primary-1)"
+                      : "border-(--gray-2)"
+                  }`}
+                >
+                  {selectedStatuses.includes(status.value) && (
+                    <svg
+                      className="w-3 h-3 text-white"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  )}
+                </div>
+                <span className="text-sm font-bold text-[#0C0E16]">
+                  {status.label}
+                </span>
+              </label>
+            </div>
           ))}
         </div>
       )}

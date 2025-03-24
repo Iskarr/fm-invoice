@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { PlusIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import SideBar from "@/components/SideBar";
+import SideBar from "@/components/Navbar";
 import NoInvoice from "@/components/NoInvoice";
 import FilterComponent from "@/components/FilterComponent";
 import NewInvoiceForm from "@/components/NewInvoiceForm"; // Import the InvoiceForm component
@@ -177,12 +177,12 @@ export default function Home() {
             />
 
             <button
-              className="flex items-center space-x-2 bg-purple-600 text-white px-2 md:px-4 py-2 md:py-3 rounded-3xl shadow"
+              className="mark-paid-button flex items-center space-x-2 bg-(--primary-1) text-white px-2 md:px-4 py-2 md:py-3 rounded-3xl shadow"
               onClick={handleOpenNewInvoiceForm}
               disabled={isLoading}
             >
               <div className="flex items-center justify-center w-8 h-8 bg-white rounded-full">
-                <PlusIcon className="w-4 h-4 text-purple-600" />
+                <PlusIcon className="w-6 h-6 font-bold text-(--primary-1)" />
               </div>
               <span className="text-sm md:text-base">New Invoice</span>
             </button>
@@ -279,7 +279,7 @@ export default function Home() {
                         {capitalizeFirstLetter(invoice.status)}
                       </span>
                     </div>
-                    <ChevronRightIcon className="w-5 h-5 text-purple-600" />
+                    <ChevronRightIcon className="w-5 h-5 font-bold text-(--primary-1)" />
                   </div>
                 </div>
               </Link>

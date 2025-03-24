@@ -180,7 +180,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
         <p className="text-red-500 mb-4">{error}</p>
         <button
           onClick={handleGoBack}
-          className="px-4 py-2 bg-purple-600 text-white rounded-md cursor-pointer"
+          className="px-4 py-2 bg-(--primary-1) text-white rounded-md cursor-pointer"
         >
           Go Back
         </button>
@@ -194,7 +194,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
         <p className="text-gray-500 mb-4">Invoice not found</p>
         <button
           onClick={handleGoBack}
-          className="px-4 py-2 bg-purple-600 text-white rounded-md"
+          className="px-4 py-2 bg-(--primary-1) text-white rounded-md"
         >
           Go Back
         </button>
@@ -208,9 +208,9 @@ export default function DetailPage({ params }: InvoiceIdProps) {
         {/* Go back button */}
         <button
           onClick={handleGoBack}
-          className="flex items-center text-[#7C5DFA] mb-6 font-bold"
+          className="go-back-button flex items-center text-[#7C5DFA] mb-6 font-bold"
         >
-          <ChevronLeftIcon className="w-5 h-5 mr-2" />
+          <ChevronLeftIcon className="w-5 h-5 mr-2 text-(--primary-1)" />
           Go back
         </button>
 
@@ -240,20 +240,20 @@ export default function DetailPage({ params }: InvoiceIdProps) {
             {/* Mobile buttons at bottom */}
             <div className="fixed bottom-0 left-0 right-0 bg-white p-6 flex justify-center space-x-2 md:hidden">
               <button
-                className="px-6 py-3 text-[#7E88C3] bg-[#F9FAFE] hover:bg-[#DFE3FA] rounded-3xl font-bold"
+                className="edit-button px-6 py-3 text-[#7E88C3] bg-[#F9FAFE] hover:bg-[#DFE3FA] rounded-3xl font-bold"
                 onClick={handleEditClick}
               >
                 Edit
               </button>
               <button
-                className="px-6 py-3 text-white bg-[#EC5757] hover:bg-[#FF9797] rounded-3xl font-bold"
+                className="delete-button px-6 py-3 text-white bg-[#EC5757] hover:bg-[#FF9797] rounded-3xl font-bold"
                 onClick={handleDelete}
               >
                 Delete
               </button>
               {invoice.status !== "paid" && (
                 <button
-                  className="px-6 py-3 text-white bg-[#7C5DFA] hover:bg-[#9277FF] rounded-3xl font-bold"
+                  className="mark-paid-button px-6 py-3 text-white bg-[#7C5DFA] hover:bg-[#9277FF] rounded-3xl font-bold"
                   onClick={handleMarkAsPaid}
                 >
                   Mark as Paid
@@ -264,20 +264,20 @@ export default function DetailPage({ params }: InvoiceIdProps) {
             {/* Desktop/Tablet buttons */}
             <div className="hidden md:flex space-x-2 mt-4 md:mt-0">
               <button
-                className="px-6 py-3 text-[#7E88C3] bg-[#F9FAFE] hover:bg-[#DFE3FA] rounded-3xl font-bold"
+                className="edit-button px-6 py-3 text-[#7E88C3] bg-[#F9FAFE] hover:bg-[#DFE3FA] rounded-3xl font-bold"
                 onClick={handleEditClick}
               >
                 Edit
               </button>
               <button
-                className="px-6 py-3 text-white bg-[#EC5757] hover:bg-[#FF9797] rounded-3xl font-bold"
+                className="delete-button px-6 py-3 text-white bg-[#EC5757] hover:bg-[#FF9797] rounded-3xl font-bold"
                 onClick={handleDelete}
               >
                 Delete
               </button>
               {invoice.status !== "paid" && (
                 <button
-                  className="px-6 py-3 text-white bg-[#7C5DFA] hover:bg-[#9277FF] rounded-3xl font-bold"
+                  className="mark-paid-button px-6 py-3 text-white bg-[#7C5DFA] hover:bg-[#9277FF] rounded-3xl font-bold"
                   onClick={handleMarkAsPaid}
                 >
                   Mark as Paid
