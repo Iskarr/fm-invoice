@@ -204,7 +204,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
 
   return (
     <div className="min-h-screen bg-[#F8F8FB]">
-      <div className="max-w-2xl mx-auto px-6 pt-8 pb-12 mt-20 md:mt-0 lg:mt-0">
+      <div className="max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto pt-8 pb-12 mt-20 md:mt-0 lg:mt-0">
         {/* Go back button */}
         <button
           onClick={handleGoBack}
@@ -288,7 +288,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
         </div>
 
         {/* Invoice details */}
-        <div className="bg-white rounded-lg shadow p-6 mb-24 md:mb-0">
+        <div className="bg-white rounded-lg shadow p-6 lg:p-10 mb-24 md:mb-0">
           {/* Invoice header */}
           <div className="md:flex md:flex-row md:justify-between">
             <div>
@@ -374,8 +374,8 @@ export default function DetailPage({ params }: InvoiceIdProps) {
           </div>
 
           {/* Desktop/Tablet layout - hidden on mobile */}
-          <div className="hidden md:grid md:grid-cols-3 gap-8 mb-8 md:mb-12">
-            <div className="space-y-8">
+          <div className="hidden md:grid md:grid-cols-12 gap-4 lg:gap-8 mb-8 md:mb-12">
+            <div className="col-span-4 space-y-8">
               <div>
                 <p className="text-[#7E88C3] mb-3">Invoice Date</p>
                 <p className="font-bold text-black">
@@ -390,7 +390,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
               </div>
             </div>
 
-            <div>
+            <div className="col-span-4">
               <p className="text-[#7E88C3] mb-3">Bill To</p>
               <p className="font-bold text-black mb-2">{invoice.clientName}</p>
               <div className="text-[#7E88C3]">
@@ -401,9 +401,11 @@ export default function DetailPage({ params }: InvoiceIdProps) {
               </div>
             </div>
 
-            <div className="col-span-2 md:col-span-1">
+            <div className="col-span-4 -ml-12 lg:ml-0">
               <p className="text-[#7E88C3] mb-3">Sent to</p>
-              <p className="font-bold text-black">{invoice.clientEmail}</p>
+              <p className="font-bold text-black lg:text-lg">
+                {invoice.clientEmail}
+              </p>
             </div>
           </div>
 

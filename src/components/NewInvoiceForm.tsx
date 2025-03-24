@@ -76,7 +76,7 @@ const AddressSection = ({
     <h3 className="text-purple-600 font-medium mb-3">{title}</h3>
 
     {prefix === "clientAddress" && (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-3 mb-4">
         <FormField label="Client Name" error={errors?.clientName}>
           <input
             type="text"
@@ -101,7 +101,7 @@ const AddressSection = ({
               errors?.clientEmail
                 ? "border-red-500 error-field"
                 : "border-gray-200"
-            } rounded-md text-sm`}
+            } rounded-md text-sm w-full`}
           />
         </FormField>
       </div>
