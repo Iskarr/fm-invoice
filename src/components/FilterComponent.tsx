@@ -83,20 +83,18 @@ const FilterComponent = ({
           {statuses.map((status) => (
             <div
               key={status.value}
-              className="py-2 cursor-pointer"
+              className="py-2 cursor-pointer group"
               onClick={() => handleStatusToggle(status.value)}
             >
               <label className="flex items-center space-x-3 w-full cursor-pointer">
                 <div
-                  className={`w-4 h-4 bg-(--gray-3) rounded flex items-center justify-center ${
-                    selectedStatuses.includes(status.value)
-                      ? "border-[#7C5DFA] bg-(--primary-1)"
-                      : "border-(--gray-2)"
+                  className={`filter-checkbox ${
+                    selectedStatuses.includes(status.value) ? "selected" : ""
                   }`}
                 >
                   {selectedStatuses.includes(status.value) && (
                     <svg
-                      className="w-3 h-3 text-white"
+                      className="w-3 h-3 text-(--gray-4) text-bold"
                       fill="none"
                       strokeLinecap="round"
                       strokeLinejoin="round"
