@@ -203,7 +203,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F8FB]">
+    <div className="min-h-screen">
       <div className="max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto pt-8 pb-12 mt-20 md:mt-0 lg:mt-0">
         {/* Go back button */}
         <button

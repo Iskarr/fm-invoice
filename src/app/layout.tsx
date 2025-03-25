@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen app-background transition-colors duration-100">
           <SideBar />
           <main
             className="

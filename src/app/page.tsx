@@ -144,7 +144,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen">
       <SideBar />
 
       {/* Main content */}
@@ -246,18 +246,20 @@ export default function Home() {
                 {/* Tablet/Desktop Layout */}
                 <div className="hidden md:flex items-center justify-between p-6">
                   <div className="flex items-center space-x-6">
-                    <span className="font-bold text-gray-500">
-                      <span className="text-gray-500">#</span>
+                    <span className="font-bold invoice-color">
+                      <span className="hash-color">#</span>
                       {invoice.id}
                     </span>
-                    <span className="text-gray-500">
+                    <span className="due-date-color">
                       Due {formatShortDate(invoice.paymentDue)}
                     </span>
-                    <span className="text-gray-500">{invoice.clientName}</span>
+                    <span className="client-name-color">
+                      {invoice.clientName}
+                    </span>
                   </div>
 
                   <div className="flex items-center space-x-6">
-                    <span className="text-xl font-bold text-gray-800 w-[140px] text-right">
+                    <span className="text-xl font-bold total-color w-[140px] text-right">
                       {invoice.total?.toLocaleString("en-GB", {
                         style: "currency",
                         currency: "GBP",
@@ -279,7 +281,7 @@ export default function Home() {
                         {capitalizeFirstLetter(invoice.status)}
                       </span>
                     </div>
-                    <ChevronRightIcon className="w-5 h-5 font-bold text-(--primary-1)" />
+                    <ChevronRightIcon className="w-5 h-5 font-bold text-[--primary-1]" />
                   </div>
                 </div>
               </Link>

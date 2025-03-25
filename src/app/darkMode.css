@@ -1,0 +1,98 @@
+/* Dark mode styles */
+[data-theme="dark"] {
+  /* Background Colors */
+  --bg-main: #141625; /* Main background */
+  --bg-secondary: #1e2139; /* Invoice cards, forms */
+  --bg-tertiary: #252945; /* Button hover states */
+
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #dfe3fa;
+  --text-tertiary: #888eb0;
+
+  /* Status Colors */
+  --status-paid-bg: rgba(51, 214, 159, 0.06);
+  --status-paid-text: #33d69f;
+  --status-pending-bg: rgba(255, 143, 0, 0.06);
+  --status-pending-text: #ff8f00;
+  --status-draft-bg: rgba(223, 227, 250, 0.06);
+  --status-draft-text: #dfe3fa;
+
+  /* Button Colors */
+  --button-primary: #7c5dfa;
+  --button-primary-hover: #9277ff;
+  --button-secondary: #252945;
+  --button-secondary-hover: #ffffff;
+  --button-danger: #ec5757;
+  --button-danger-hover: #ff9797;
+
+  /* Form Elements */
+  --input-bg: #1e2139;
+  --input-border: #252945;
+  --input-text: #ffffff;
+
+  /* Sidebar */
+  --sidebar-bg: #1e2139;
+  --sidebar-border: #494e6e;
+
+  /* Other Elements */
+  --divider-color: #494e6e;
+  --checkbox-bg: #1e2139;
+  --checkbox-border: #7c5dfa;
+}
+
+/* Apply dark mode styles to specific elements */
+[data-theme="dark"] .bg-white {
+  background-color: var(--bg-secondary);
+}
+
+[data-theme="dark"] .text-gray-800 {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .text-gray-500 {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .shadow {
+  box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .hover\:bg-gray-50:hover {
+  background-color: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .filter-checkbox:not(.selected) {
+  background-color: var(--checkbox-bg);
+  border-color: var(--input-border);
+}
+
+[data-theme="dark"] .filter-checkbox.selected {
+  background-color: var(--button-primary);
+  border-color: var(--button-primary);
+}
+
+[data-theme="dark"] .app-background {
+  background-color: var(--bg-main); /* #141625 from the design */
+}
+
+[data-theme="light"] .app-background {
+  background-color: #f8f8fb;
+}
+
+/* dark colors */
+[data-theme="dark"] .invoice-color {
+  color: var(--gray-4);
+}
+
+[data-theme="dark"] .due-date-color {
+  color: var(--gray-3);
+}
+
+[data-theme="dark"] .client-name-color {
+  color: var(--gray-4);
+}
+
+[data-theme="dark"] .total-color {
+  color: var(--gray-4);
+}

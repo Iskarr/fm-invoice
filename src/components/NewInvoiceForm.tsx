@@ -739,7 +739,7 @@ export default function InvoiceForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex overflow-hidden">
+    <div className="fixed inset-0 z-50 flex overflow-hidden mt-20 md:mt-20 lg:ml-24 lg:mt-0">
       {/* Light gray overlay with fade effect */}
       <div
         className="absolute inset-0 transition-opacity duration-300 ease-in-out"

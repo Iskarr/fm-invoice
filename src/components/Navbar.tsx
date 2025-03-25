@@ -1,7 +1,34 @@
 "use client";
-import { MoonIcon } from "@heroicons/react/20/solid";
+import { useState, useEffect } from "react";
+import { MoonIcon, SunIcon } from "@heroicons/react/20/solid";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check if user has a theme preference in localStorage
+    const theme = localStorage.getItem("theme");
+    setDarkMode(theme === "dark");
+    if (theme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = darkMode ? "light" : "dark";
+    setDarkMode(!darkMode);
+    localStorage.setItem("theme", newTheme);
+
+    // Toggle both data-theme and class
+    document.documentElement.setAttribute("data-theme", newTheme);
+    document.documentElement.classList.toggle("dark");
+  };
+
   return (
     <div
       className="fixed z-40 top-0 left-0 right-0 w-full h-20 flex flex-row justify-between bg-(--dark-2)
@@ -35,13 +62,17 @@ const Navbar = () => {
           lg:w-full lg:h-auto lg:border-l-0"
         >
           <button
-            className="w-full h-20 text-gray-400 hover:bg-gray-700 transition-colors duration-200 
-              focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset
+            className="w-full h-20 text-[--gray-1] hover:bg-[--dark-2] transition-colors duration-200 
+              focus:outline-none focus:ring-2 focus:ring-[--primary-1] focus:ring-inset
               flex items-center justify-center"
             aria-label="Toggle dark mode"
-            onClick={() => console.log("Dark mode toggle clicked")}
+            onClick={toggleTheme}
           >
-            <MoonIcon className="w-6 h-6" />
+            {darkMode ? (
+              <SunIcon className="w-6 h-6" />
+            ) : (
+              <MoonIcon className="w-6 h-6" />
+            )}
           </button>
         </div>
 

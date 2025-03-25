@@ -177,7 +177,7 @@ export default function InvoiceEditForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex overflow-hidden">
+    <div className="mt-20 lg:mt-0 lg:ml-24 fixed inset-0 z-50 flex overflow-hidden">
       {/* Light gray overlay with fade effect */}
       <div
         className="absolute inset-0 transition-opacity duration-300 ease-in-out"
@@ -199,15 +199,24 @@ export default function InvoiceEditForm({
         {/* Mobile Go Back button */}
         <div className="md:hidden p-4 bg-white sticky top-0 z-10">
           <button
-            type="button"
             onClick={handleCloseEditForm}
-            className="flex items-center text-[#7C5DFA] font-bold"
+            className="go-back-button flex items-center text-[#7C5DFA] mb-6 font-bold"
           >
-            <ChevronLeftIcon className="w-5 h-5 mr-2" />
+            <ChevronLeftIcon className="w-5 h-5 mr-2 text-(--primary-1)" />
             Go back
           </button>
         </div>
 
+        {/* Desktop Go Back button */}
+        <div className="hidden md:flex justify-between items-center pb-4 pl-4 pr-4 pt-8 bg-white sticky top-0 md:top-0 z-10">
+          <button
+            onClick={handleCloseEditForm}
+            className="go-back-button flex items-center text-[#7C5DFA] mb-6 font-bold"
+          >
+            <ChevronLeftIcon className="w-5 h-5 mr-2 text-(--primary-1)" />
+            Go back
+          </button>
+        </div>
         {/* Header */}
         <div className="flex justify-between items-center p-4 bg-white sticky top-0 md:top-0 z-10">
           <h2 className="text-lg md:text-xl font-bold text-gray-800">
@@ -497,19 +506,18 @@ export default function InvoiceEditForm({
             </button>
           </div>
 
-          {/* Desktop Go Back button */}
-          <div className="hidden md:flex justify-between mt-4 sticky bottom-0 bg-white p-3">
+          {/* Desktop Cancel and Save Changes button */}
+          <div className="hidden md:flex justify-end mt-4 sticky bottom-0 bg-white p-3">
             <button
               type="button"
               onClick={handleCloseEditForm}
-              className="flex items-center text-[#7C5DFA] font-bold"
+              className="edit-button px-6 py-3 text-[#7E88C3] bg-[#F9FAFE] hover:bg-[#DFE3FA] rounded-3xl font-bold"
             >
-              <ChevronLeftIcon className="w-5 h-5 mr-2" />
-              Go back
+              Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-purple-600 text-white rounded-3xl text-sm"
+              className="mark-paid-button px-6 py-3 text-white bg-(--primary-1) hover:bg-[--primary-2] rounded-3xl font-bold"
             >
               Save Changes
             </button>

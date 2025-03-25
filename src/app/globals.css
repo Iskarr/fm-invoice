@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;700&display=swap");
+@import "./darkMode.css";
 
 :root {
   /* Primary Colors */
@@ -23,6 +24,9 @@
   --accent-red-light: #ff9797;
   --accent-green: #33d69f;
   --accent-orange: #ff8f00;
+
+  /* Light theme variables */
+  /* ... your existing light theme variables ... */
 }
 
 body {
@@ -94,4 +98,34 @@ button:hover {
 
 .group:hover .filter-checkbox:not(.selected) {
   border: 2px solid var(--primary-1);
+}
+
+/* Add transition for smooth theme switching */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* hash color */
+.hash-color {
+  color: var(--gray-2);
+}
+
+/* invoice color */
+.invoice-color {
+  color: var(--dark-4);
+}
+
+/* due date color */
+.due-date-color {
+  color: var(--gray-2);
+}
+
+/* client name color */
+.client-name-color {
+  color: var(--gray-2);
+}
+
+/* total color */
+.total-color {
+  color: var(--dark-4);
 }
