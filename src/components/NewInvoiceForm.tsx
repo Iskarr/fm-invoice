@@ -772,9 +772,7 @@ export default function InvoiceForm({
 
         {/* Header */}
         <div className="flex justify-between items-center p-4 bg-white sticky top-[56px] z-10">
-          <h2 className="text-lg md:text-xl font-bold text-gray-800">
-            New Invoice
-          </h2>
+          <h2 className="text-lg md:text-xl font-bold">New Invoice</h2>
         </div>
 
         <form

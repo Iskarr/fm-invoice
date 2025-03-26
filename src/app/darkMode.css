@@ -80,6 +80,7 @@
   background-color: #f8f8fb;
 }
 
+/* Dark mode starts here */
 /* dark colors */
 [data-theme="dark"] .invoice-color {
   color: var(--gray-4);

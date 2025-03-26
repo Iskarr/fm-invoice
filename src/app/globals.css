@@ -65,6 +65,10 @@ button:hover {
   color: var(--dark-4);
 }
 
+[data-theme="dark"] .go-back-button {
+  color: var(--gray-4);
+}
+
 .go-back-button:hover {
   color: var(--gray-2);
 }
@@ -96,8 +100,17 @@ button:hover {
   background-color: var(--gray-3);
 }
 
+[data-theme="dark"] .filter-checkbox:not(.selected) {
+  background-color: var(--dark-3);
+}
+
 .group:hover .filter-checkbox:not(.selected) {
   border: 2px solid var(--primary-1);
+}
+
+.bg-filter {
+  background-color: red;
+  color: red;
 }
 
 /* Add transition for smooth theme switching */
@@ -125,7 +138,31 @@ button:hover {
   color: var(--gray-2);
 }
 
-/* total color */
+/* total color and price */
 .total-color {
   color: var(--dark-4);
+}
+
+.bg-details-colors {
+  background-color: var(--gray-4);
+}
+
+.bg-details-colors-total {
+  background-color: var(--dark-4);
+}
+
+[data-theme="dark"] .bg-details-colors {
+  background-color: var(--dark-3);
+}
+
+[data-theme="dark"] .bg-details-colors-total {
+  background-color: var(--dark-4);
+}
+
+.details-colors {
+  color: var(--dark-4);
+}
+
+[data-theme="dark"] .details-colors {
+  color: var(--gray-4);
 }

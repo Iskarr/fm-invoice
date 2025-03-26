@@ -66,7 +66,7 @@ const FilterComponent = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center space-x-2 text-gray-700 px-4 py-2"
+        className="flex items-center space-x-2 total-color px-4 py-2"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="md:hidden font-bold">Filter</span>
@@ -94,7 +94,7 @@ const FilterComponent = ({
                 >
                   {selectedStatuses.includes(status.value) && (
                     <svg
-                      className="w-3 h-3 text-(--gray-4) text-bold"
+                      className="w-4 h-4 text-bold text-white"
                       fill="none"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -106,7 +106,7 @@ const FilterComponent = ({
                     </svg>
                   )}
                 </div>
-                <span className="text-sm font-bold text-[#0C0E16]">
+                <span className="text-sm font-bold total-color">
                   {status.label}
                 </span>
               </label>

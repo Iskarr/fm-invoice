@@ -219,7 +219,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div className="flex items-center justify-between md:justify-start w-full md:w-auto">
               <div className="flex items-center">
-                <span className="text-[#7E88C3] mr-4">Status</span>
+                <span className="total-color mr-4">Status</span>
                 <div
                   className={`flex items-center space-x-2 px-4 py-2 rounded-md ${getStatusStyles(
                     invoice.status
@@ -294,7 +294,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
             <div>
               <h2 className="text-lg font-bold mb-1">
                 <span className="text-[#7E88C3]">#</span>
-                <span>{invoice.id}</span>
+                <span className="total-color">{invoice.id}</span>
               </h2>
               <p className="text-[#7E88C3] text-sm">{invoice.description}</p>
             </div>
@@ -317,11 +317,11 @@ export default function DetailPage({ params }: InvoiceIdProps) {
           </div>
 
           {/* Mobile layout for dates and billing info */}
-          <div className="md:hidden mt-8">
+          <div className="md:hidden mt-8 details-colors">
             <div className="flex">
               <div className="flex-1">
                 <div className="mb-6">
-                  <p className="text-[#7E88C3] text-sm mb-3">Invoice Date</p>
+                  <p className="text-sm mb-3 text-[#7E88C3]">Invoice Date</p>
                   <p className="font-bold">{formatDate(invoice.createdAt)}</p>
                 </div>
                 <div>
@@ -347,13 +347,13 @@ export default function DetailPage({ params }: InvoiceIdProps) {
             </div>
 
             {/* Mobile view items */}
-            <div className="md:hidden mt-8 bg-[#F9FAFE] rounded-lg overflow-hidden">
+            <div className="md:hidden mt-8 rounded-lg overflow-hidden total-color bg-details-colors">
               <div className="p-6">
                 {invoice.items?.map((item, index) => (
                   <div key={index} className="mb-4 last:mb-0">
                     <div className="flex justify-between mb-2">
-                      <p className="font-bold text-black">{item.name}</p>
-                      <p className="font-bold text-black">
+                      <p className="font-bold">{item.name}</p>
+                      <p className="font-bold">
                         £{(item.quantity * item.price).toFixed(2)}
                       </p>
                     </div>
@@ -364,7 +364,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
                 ))}
               </div>
 
-              <div className="bg-[#373B53] p-6 rounded-b-lg text-white flex justify-between items-center">
+              <div className="bg-details-colors-total p-6 rounded-b-lg text-white flex justify-between items-center">
                 <span className="text-sm">Grand Total</span>
                 <span className="text-xl font-bold">
                   £{invoice.total.toFixed(2)}
@@ -374,25 +374,21 @@ export default function DetailPage({ params }: InvoiceIdProps) {
           </div>
 
           {/* Desktop/Tablet layout - hidden on mobile */}
-          <div className="hidden md:grid md:grid-cols-12 gap-4 lg:gap-8 mb-8 md:mb-12">
+          <div className="hidden md:grid md:grid-cols-12 gap-4 lg:gap-8 mb-8 md:mb-12 details-colors">
             <div className="col-span-4 space-y-8">
               <div>
                 <p className="text-[#7E88C3] mb-3">Invoice Date</p>
-                <p className="font-bold text-black">
-                  {formatDate(invoice.createdAt)}
-                </p>
+                <p className="font-bold">{formatDate(invoice.createdAt)}</p>
               </div>
               <div>
                 <p className="text-[#7E88C3] mb-3">Payment Due</p>
-                <p className="font-bold text-black">
-                  {formatDate(invoice.paymentDue)}
-                </p>
+                <p className="font-bold">{formatDate(invoice.paymentDue)}</p>
               </div>
             </div>
 
             <div className="col-span-4">
               <p className="text-[#7E88C3] mb-3">Bill To</p>
-              <p className="font-bold text-black mb-2">{invoice.clientName}</p>
+              <p className="font-bold mb-2">{invoice.clientName}</p>
               <div className="text-[#7E88C3]">
                 <p>{invoice.clientAddress?.street}</p>
                 <p>{invoice.clientAddress?.city}</p>
@@ -403,37 +399,48 @@ export default function DetailPage({ params }: InvoiceIdProps) {
 
             <div className="col-span-4 -ml-12 lg:ml-0">
               <p className="text-[#7E88C3] mb-3">Sent to</p>
-              <p className="font-bold text-black lg:text-lg">
-                {invoice.clientEmail}
-              </p>
+              <p className="font-bold lg:text-lg">{invoice.clientEmail}</p>
             </div>
           </div>
 
           {/* Tablet/Desktop view items */}
-          <div className="hidden md:block mt-8 bg-[#F9FAFE] rounded-lg overflow-hidden">
-            <div className="p-6">
+          <div className="hidden md:block mt-8 bg-details-colors rounded-lg overflow-hidden">
+            {/* Headers */}
+            <div className="grid grid-cols-8 p-8 total-color">
+              <div className="col-span-4">Item Name</div>
+              <div className="col-span-1 text-center">QTY.</div>
+              <div className="col-span-2 text-right">Price</div>
+              <div className="col-span-1 text-right">Total</div>
+            </div>
+
+            {/* Items */}
+            <div className="px-8 total-color">
               {invoice.items?.map((item, index) => (
                 <div
                   key={index}
-                  className="flex justify-between items-center mb-4 last:mb-0"
+                  className="grid grid-cols-8 mb-4 last:mb-8 items-center"
                 >
-                  <div className="flex-1">
-                    <p className="font-bold text-black mb-2">{item.name}</p>
-                    <p className="text-[#7E88C3] font-bold">
-                      {item.quantity} x £{item.price.toFixed(2)}
-                    </p>
-                  </div>
-                  <p className="font-bold text-black text-right ml-4">
-                    £{(item.quantity * item.price).toFixed(2)}
+                  <p className="col-span-4 font-bold total-color">
+                    {item.name}
+                  </p>
+                  <p className="col-span-1 text-center text-[--gray-2] font-bold">
+                    {item.quantity}
+                  </p>
+                  <p className="col-span-2 text-right text-[--gray-2] font-bold">
+                    £{item.price.toFixed(2)}
+                  </p>
+                  <p className="col-span-1 text-right font-bold total-color">
+                    £ {(item.quantity * item.price).toFixed(2)}
                   </p>
                 </div>
               ))}
             </div>
 
-            <div className="bg-[#373B53] p-6 rounded-b-lg text-white flex justify-between items-center">
+            {/* Total */}
+            <div className="bg-[#373B53] p-8 rounded-b-lg text-white flex justify-between items-center bg-details-colors-total">
               <span className="text-sm">Grand Total</span>
               <span className="text-xl font-bold">
-                £{invoice.total.toFixed(2)}
+                £ {invoice.total.toFixed(2)}
               </span>
             </div>
           </div>

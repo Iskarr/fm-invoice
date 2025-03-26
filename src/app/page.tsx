@@ -160,10 +160,10 @@ export default function Home() {
 
         <header className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+            <h1 className="text-2xl md:text-3xl font-bold total-color">
               Invoices
             </h1>
-            <p className="text-sm md:text-base text-gray-500 mt-1">
+            <p className="text-sm md:text-base total-color mt-1">
               {filteredInvoices.length > 0
                 ? `${filteredInvoices.length} invoices`
                 : "No invoices"}
@@ -181,7 +181,7 @@ export default function Home() {
               onClick={handleOpenNewInvoiceForm}
               disabled={isLoading}
             >
-              <div className="flex items-center justify-center w-8 h-8 bg-white rounded-full">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white new-invoice-button">
                 <PlusIcon className="w-6 h-6 font-bold text-(--primary-1)" />
               </div>
               <span className="text-sm md:text-base">New Invoice</span>
@@ -281,7 +281,7 @@ export default function Home() {
                         {capitalizeFirstLetter(invoice.status)}
                       </span>
                     </div>
-                    <ChevronRightIcon className="w-5 h-5 font-bold text-[--primary-1]" />
+                    <ChevronRightIcon className="w-6 h-6 font-bold text-[--primary-1] text-(--primary-1)" />
                   </div>
                 </div>
               </Link>

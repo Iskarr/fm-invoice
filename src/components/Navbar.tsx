@@ -69,9 +69,9 @@ const Navbar = () => {
             onClick={toggleTheme}
           >
             {darkMode ? (
-              <SunIcon className="w-6 h-6" />
+              <SunIcon className="w-6 h-6 text-white" />
             ) : (
-              <MoonIcon className="w-6 h-6" />
+              <MoonIcon className="w-6 h-6 text-(--primary-2)" />
             )}
           </button>
         </div>
