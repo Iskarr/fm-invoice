@@ -84,9 +84,7 @@ const AddressSection = ({
             value={formData?.clientName || ""}
             onChange={(e) => onChange(e, "", "")}
             className={`w-full p-2 border ${
-              errors?.clientName
-                ? "border-red-500 error-field"
-                : "border-gray-200"
+              errors?.clientName ? "border-red-500 error-field" : "form-border"
             } rounded-md text-sm`}
           />
         </FormField>
@@ -98,9 +96,7 @@ const AddressSection = ({
             value={formData?.clientEmail || ""}
             onChange={(e) => onChange(e, "", "")}
             className={`w-full p-2 border ${
-              errors?.clientEmail
-                ? "border-red-500 error-field"
-                : "border-gray-200"
+              errors?.clientEmail ? "border-red-500 error-field" : "form-border"
             } rounded-md text-sm w-full`}
           />
         </FormField>
@@ -116,7 +112,7 @@ const AddressSection = ({
         className={`w-full p-2 border ${
           errors?.[prefix]?.street
             ? "border-red-500 error-field"
-            : "border-gray-200"
+            : "form-border"
         } rounded-md text-sm`}
       />
     </FormField>
@@ -140,7 +136,7 @@ const AddressSection = ({
             className={`w-full p-2 border ${
               errors?.[prefix]?.[field]
                 ? "border-red-500 error-field"
-                : "border-gray-200"
+                : "form-border"
             } rounded-md text-sm`}
           />
         </FormField>
@@ -188,7 +184,7 @@ const ItemList = ({
               className={`w-full p-2 border ${
                 errors?.items?.[index]?.name
                   ? "border-red-500 error-field"
-                  : "border-gray-200"
+                  : "form-border"
               } rounded-md text-sm`}
             />
           </div>
@@ -200,7 +196,7 @@ const ItemList = ({
               className={`w-full p-2 border ${
                 errors?.items?.[index]?.quantity
                   ? "border-red-500 error-field"
-                  : "border-gray-200"
+                  : "form-border"
               } rounded-md text-center text-sm`}
               min="1"
             />
@@ -213,7 +209,7 @@ const ItemList = ({
               className={`w-full p-2 border ${
                 errors?.items?.[index]?.price
                   ? "border-red-500 error-field"
-                  : "border-gray-200"
+                  : "form-border"
               } rounded-md text-right text-sm`}
               min="0"
               step="0.01"
@@ -742,11 +738,7 @@ export default function InvoiceForm({
     <div className="fixed inset-0 z-50 flex overflow-hidden mt-20 md:mt-20 lg:ml-24 lg:mt-0">
       {/* Light gray overlay with fade effect */}
       <div
-        className="absolute inset-0 transition-opacity duration-300 ease-in-out"
-        style={{
-          backgroundColor: "rgba(229, 231, 235, 0.75)",
-          opacity: animateOverlay ? 1 : 0,
-        }}
+        className="absolute inset-0 transition-opacity duration-300 ease-in-out faded-background"
         onClick={handleCloseForm}
       ></div>
 
@@ -759,7 +751,7 @@ export default function InvoiceForm({
         }}
       >
         {/* Mobile Go Back button */}
-        <div className="p-4 bg-white sticky top-0 z-10">
+        <div className="p-4 bg-white sticky top-0 z-10 form-background">
           <button
             type="button"
             onClick={handleCloseForm}
@@ -771,13 +763,15 @@ export default function InvoiceForm({
         </div>
 
         {/* Header */}
-        <div className="flex justify-between items-center p-4 bg-white sticky top-[56px] z-10">
-          <h2 className="text-lg md:text-xl font-bold">New Invoice</h2>
+        <div className="flex justify-between items-center p-4 form-background sticky top-[56px] z-10">
+          <h2 className="text-lg md:text-xl font-bold total-color">
+            New Invoice
+          </h2>
         </div>
 
         <form
           onSubmit={(e) => handleSubmit(e)}
-          className="p-4 md:pb-4 pb-0 relative"
+          className="p-4 md:pb-4 pb-0 relative form-background"
         >
           <AddressSection
             title="Bill From"
@@ -819,7 +813,7 @@ export default function InvoiceForm({
                 className={`w-full p-2 border ${
                   errors.createdAt
                     ? "border-red-500 error-field"
-                    : "border-gray-200"
+                    : "form-border"
                 } rounded-md text-sm`}
               />
             </FormField>
@@ -829,9 +823,11 @@ export default function InvoiceForm({
                 name="paymentTerms"
                 value={paymentTerms}
                 onChange={handlePaymentTermsChange}
-                className="w-full p-2 border border-gray-200 rounded-md text-sm"
+                className="w-full p-2 border form-border rounded-md text-sm"
               >
-                <option value="Net 1 Day">Net 1 Day</option>
+                <option value="Net 1 Day" className="total-color">
+                  Net 1 Day
+                </option>
                 <option value="Net 7 Days">Net 7 Days</option>
                 <option value="Net 14 Days">Net 14 Days</option>
                 <option value="Net 30 Days">Net 30 Days</option>
@@ -848,7 +844,7 @@ export default function InvoiceForm({
                   className={`w-full p-2 border ${
                     errors.description
                       ? "border-red-500 error-field"
-                      : "border-gray-200"
+                      : "form-border"
                   } rounded-md text-sm`}
                 />
               </FormField>

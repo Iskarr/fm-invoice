@@ -166,3 +166,34 @@ button:hover {
 [data-theme="dark"] .details-colors {
   color: var(--gray-4);
 }
+
+/* faded background, dark and light */
+.faded-background {
+  background-color: var(--dark-4);
+  opacity: 0.5;
+}
+
+[data-theme="dark"] .faded-background {
+  background-color: var(--dark-4);
+  opacity: 0.5;
+}
+
+/* form background */
+.form-background {
+  background-color: var(--gray-4);
+}
+
+[data-theme="dark"] .form-background {
+  background-color: var(--dark-1);
+}
+
+/* form borders */
+.form-border {
+  border: 1px solid var(--gray-3);
+  color: var(--dark-4);
+}
+
+[data-theme="dark"] .form-border {
+  border: 1px solid var(--dark-2);
+  color: var(--gray-4);
+}
