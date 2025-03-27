@@ -118,6 +118,14 @@ button:hover {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+input {
+  background-color: var(--gray-4);
+}
+
+[data-theme="dark"] input {
+  background-color: var(--dark-3);
+}
+
 /* hash color */
 .hash-color {
   color: var(--gray-2);
@@ -180,7 +188,7 @@ button:hover {
 
 /* form background */
 .form-background {
-  background-color: var(--gray-4);
+  background-color: white;
 }
 
 [data-theme="dark"] .form-background {
@@ -196,4 +204,157 @@ button:hover {
 [data-theme="dark"] .form-border {
   border: 1px solid var(--dark-2);
   color: var(--gray-4);
+}
+
+/* date color */
+.date-color {
+  color: var(--dark-4);
+  background-color: var(--gray-4);
+}
+
+[data-theme="dark"] .date-color {
+  color: var(--gray-4);
+  background-color: var(--dark-1);
+}
+
+/* discard/save as draft/save and send button */
+.discard-button {
+  background-color: #f9fafe;
+  color: #7e88c3;
+}
+
+[data-theme="dark"] .discard-button {
+  background-color: #252945;
+  color: #dfe3fa;
+}
+
+.discard-button:hover {
+  background-color: #dfe3fa;
+  color: #7e88c3;
+}
+
+[data-theme="dark"] .discard-button:hover {
+  background-color: #ffffff;
+  color: #7e88c3;
+}
+
+/* save as draft button */
+.save-as-draft-button {
+  background-color: #373b53;
+  color: #dfe3fa;
+}
+
+[data-theme="dark"] .save-as-draft-button {
+  background-color: #252945;
+  color: #dfe3fa;
+}
+
+.save-as-draft-button:hover {
+  background-color: #1e2139;
+  color: #dfe3fa;
+}
+
+[data-theme="dark"] .save-as-draft-button:hover {
+  background-color: #373b53;
+  color: #dfe3fa;
+}
+
+/* save and send button */
+.save-and-send-button {
+  background-color: #7c5dfa;
+  color: #ffffff;
+}
+
+.save-and-send-button:hover {
+  background-color: #9277ff;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .save-and-send-button {
+  background-color: #7c5dfa;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .save-and-send-button:hover {
+  background-color: #9277ff;
+  color: #ffffff;
+}
+
+/* Date input styles */
+/* update this to have a different color for the calendar icon, and background when calendar is open */
+.date-input-calendar-icon {
+  color: var(--dark-4);
+}
+
+[data-theme="dark"] .date-input-calendar-icon {
+  color: var(--gray-4);
+}
+
+.date-input {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 4px;
+  font-weight: 700;
+  background-color: #ffffff;
+  border: 1px solid var(--gray-3);
+  color: var(--dark-4);
+  cursor: pointer;
+}
+
+.date-input:focus {
+  outline: none;
+  border: 1px solid var(--primary-1);
+}
+
+.date-input:hover {
+  border: 1px solid var(--primary-1);
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .date-input {
+  background-color: var(--dark-2);
+  border: 1px solid var(--dark-2);
+  color: var(--gray-4);
+}
+
+[data-theme="dark"] .date-input:hover {
+  border: 1px solid var(--primary-1);
+}
+
+/* Error state */
+.date-input.error-field {
+  border: 1px solid var(--accent-red);
+}
+
+/* Add New Item button styles */
+.add-item-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Light mode */
+.add-item-button {
+  background-color: #f9fafe;
+  color: #7e88c3;
+}
+
+.add-item-button:hover {
+  background-color: #dfe3fa;
+}
+
+/* Dark mode */
+[data-theme="dark"] .add-item-button {
+  background-color: #252945;
+  color: #7e88c3;
+}
+
+[data-theme="dark"] .add-item-button:hover {
+  background-color: #1e2139;
 }

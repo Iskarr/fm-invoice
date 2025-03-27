@@ -181,7 +181,7 @@ export default function Home() {
               onClick={handleOpenNewInvoiceForm}
               disabled={isLoading}
             >
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white new-invoice-button">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-(--gray-4) dark:bg-(--gray-4)">
                 <PlusIcon className="w-6 h-6 font-bold text-(--primary-1)" />
               </div>
               <span className="text-sm md:text-base">New Invoice</span>

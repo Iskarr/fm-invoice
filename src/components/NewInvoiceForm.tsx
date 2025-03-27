@@ -164,7 +164,7 @@ const ItemList = ({
   onAddItem: () => void;
 }) => (
   <div className="mb-6">
-    <h3 className="text-lg font-bold text-gray-700 mb-3">Item List</h3>
+    <h3 className="text-lg font-bold text-(--gray-1) mb-3">Item List</h3>
     <div className="grid grid-cols-12 text-xs text-gray-500 mb-2 px-2">
       <div className="col-span-5">Item Name</div>
       <div className="col-span-2 text-center">Qty.</div>
@@ -232,11 +232,7 @@ const ItemList = ({
       ))}
     </div>
 
-    <button
-      type="button"
-      onClick={onAddItem}
-      className="w-full p-2 mt-3 bg-gray-100 text-purple-600 font-medium rounded-md hover:bg-gray-200 text-sm"
-    >
+    <button type="button" onClick={onAddItem} className="add-item-button">
       + Add New Item
     </button>
 
@@ -823,7 +819,7 @@ export default function InvoiceForm({
                 name="paymentTerms"
                 value={paymentTerms}
                 onChange={handlePaymentTermsChange}
-                className="w-full p-2 border form-border rounded-md text-sm"
+                className="w-full p-2 border form-border rounded-md text-sm date-color"
               >
                 <option value="Net 1 Day" className="total-color">
                   Net 1 Day
@@ -858,40 +854,15 @@ export default function InvoiceForm({
             onAddItem={addNewItem}
           />
 
-          {/* Desktop Go Back and action buttons */}
-          <div className="hidden md:flex justify-end mt-4 sticky bottom-0 bg-white p-3">
-            <div className="flex space-x-2">
-              <button
-                type="button"
-                onClick={handleCloseForm}
-                className="px-4 py-2 bg-[#F9FAFE] text-[#7E88C3] rounded-3xl text-sm hover:bg-[#DFE3FA]"
-              >
-                Discard
-              </button>
-              <button
-                type="button"
-                onClick={(e) => handleSubmit(e, true)}
-                className="px-4 py-2 bg-[#373B53] text-white rounded-3xl text-sm hover:bg-[#0C0E16]"
-              >
-                Save as Draft
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[#7C5DFA] text-white rounded-3xl text-sm hover:bg-[#9277FF]"
-              >
-                Save & Send
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile action buttons */}
-          <div className="md:hidden w-[calc(100%+32px)] flex flex-wrap gap-2 sticky bottom-0 bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.1)] -ml-4">
-            <div className="w-full p-6">
-              <div className="flex w-full justify-between">
+          {/* Button container */}
+          <div className="sticky bottom-0 w-full">
+            <div className="p-6">
+              {/* Mobile buttons (stacked) */}
+              <div className="flex flex-col gap-2 md:hidden">
                 <button
                   type="button"
                   onClick={handleCloseForm}
-                  className="px-4 py-2 bg-[#F9FAFE] text-[#7E88C3] rounded-3xl text-sm hover:bg-[#DFE3FA] cursor-pointer"
+                  className="discard-button w-full py-4 rounded-3xl font-bold"
                 >
                   Discard
                 </button>
@@ -899,13 +870,39 @@ export default function InvoiceForm({
                   <button
                     type="button"
                     onClick={(e) => handleSubmit(e, true)}
-                    className="px-4 py-2 bg-[#373B53] text-white rounded-3xl text-sm hover:bg-[#0C0E16] cursor-pointer"
+                    className="save-as-draft-button flex-1 py-4 rounded-3xl font-bold"
                   >
                     Save as Draft
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#7C5DFA] text-white rounded-3xl text-sm hover:bg-[#9277FF] cursor-pointer"
+                    className="save-and-send-button flex-1 py-4 rounded-3xl font-bold"
+                  >
+                    Save & Send
+                  </button>
+                </div>
+              </div>
+
+              {/* Tablet/Desktop buttons (horizontal with discard on left) */}
+              <div className="hidden md:flex justify-between items-center">
+                <button
+                  type="button"
+                  onClick={handleCloseForm}
+                  className="discard-button py-4 px-6 rounded-3xl font-bold"
+                >
+                  Discard
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => handleSubmit(e, true)}
+                    className="save-as-draft-button py-4 px-6 rounded-3xl font-bold"
+                  >
+                    Save as Draft
+                  </button>
+                  <button
+                    type="submit"
+                    className="save-and-send-button py-4 px-6 rounded-3xl font-bold"
                   >
                     Save & Send
                   </button>
