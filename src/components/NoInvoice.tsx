@@ -1,13 +1,15 @@
 import React from "react";
-
+import Image from "next/image";
 const NoInvoice = () => {
   return (
     <div className="p-8 flex flex-col items-center justify-center">
       <div className="max-w-xs mb-6">
-        <img
+        <Image
           alt="No invoices"
           className="w-full"
           src="/assets/illustration-empty.svg"
+          width={100}
+          height={100}
           fetchPriority="low"
           loading="lazy"
           decoding="async"

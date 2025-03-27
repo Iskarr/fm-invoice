@@ -20,6 +20,7 @@ export default function InvoiceEditForm({
   const [editedInvoice, setEditedInvoice] = useState<Invoice | null>(null);
   const [paymentTerms, setPaymentTerms] = useState<string>("Net 30 Days");
   const [animateForm, setAnimateForm] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [animateOverlay, setAnimateOverlay] = useState<boolean>(false);
 
   // Initialize the form when the invoice changes
@@ -284,7 +285,7 @@ export default function InvoiceEditForm({
 
             <div className="mb-3">
               <label className="block text-sm text-gray-500 mb-1">
-                Client's Name
+                Client&apos;s Name
               </label>
               <input
                 type="text"
@@ -297,7 +298,7 @@ export default function InvoiceEditForm({
 
             <div className="mb-3">
               <label className="block text-sm text-gray-500 mb-1">
-                Client's Email
+                Client&apos;s Email
               </label>
               <input
                 type="email"

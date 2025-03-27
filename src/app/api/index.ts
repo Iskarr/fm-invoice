@@ -6,7 +6,7 @@ export const getInvoices = async () => {
   return data;
 };
 
-export const createInvoice = async (invoice: any) => {
+export const createInvoice = async (invoice: string) => {
   const { data } = await axios.post(
     "http://localhost:3001/api/invoice",
     invoice
@@ -14,7 +14,7 @@ export const createInvoice = async (invoice: any) => {
   return data;
 };
 
-export const updateInvoice = async (id: any, invoice: any) => {
+export const updateInvoice = async (id: string, invoice: string) => {
   const { data } = await axios.put(
     `http://localhost:3001/api/invoice/${id}`,
     invoice
@@ -22,19 +22,19 @@ export const updateInvoice = async (id: any, invoice: any) => {
   return data;
 };
 
-export const deleteInvoice = async (id: any) => {
+export const deleteInvoice = async (id: string) => {
   const { data } = await axios.delete(
     `http://localhost:3001/api/invoice/${id}`
   );
   return data;
 };
 
-export const getInvoice = async (id: any) => {
+export const getInvoice = async (id: string) => {
   const { data } = await axios.get(`http://localhost:3001/api/invoice/${id}`);
   return data;
 };
 
-export const getInvoiceItems = async (id: any) => {
+export const getInvoiceItems = async (id: string) => {
   const { data } = await axios.get(
     `http://localhost:3001/api/invoice/${id}/items`
   );

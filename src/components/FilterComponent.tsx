@@ -1,10 +1,10 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-
+import { Invoice } from "@/types";
 interface FilterComponentProps {
-  invoices: any[];
-  setFilteredInvoices: (invoices: any[]) => void;
+  invoices: Invoice[];
+  setFilteredInvoices: (invoices: Invoice[]) => void;
 }
 
 const FilterComponent = ({

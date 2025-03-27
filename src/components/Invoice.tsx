@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 
 interface InvoiceItem {
@@ -36,10 +36,12 @@ export default function InvoiceDetail({ params }: { params: { $id: string } }) {
   const router = useRouter();
   const documentId = params.$id; // "67d2f4dc002015559a12"
   console.log("this is the documentId", documentId);
-
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [invoice, _setInvoice] = useState<Invoice | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [loading, _setLoading] = useState<boolean>(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [error, _setError] = useState<string | null>(null);
 
   const handleGoBack = () => {
     router.push("/");

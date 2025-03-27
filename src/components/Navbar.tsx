@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { MoonIcon, SunIcon } from "@heroicons/react/20/solid";
-import ThemeToggle from "./ThemeToggle";
+import Image from "next/image";
 
 const Navbar = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -40,7 +40,13 @@ const Navbar = () => {
         lg:h-24 lg:w-full lg:rounded-br-2xl lg:rounded-tr-2xl 
         bg-(--primary-1) relative overflow-hidden"
       >
-        <img src="/assets/logo.svg" alt="logo" className="w-12 h-auto z-10" />
+        <Image
+          src="/assets/logo.svg"
+          alt="logo"
+          className="w-12 h-auto z-10"
+          width={48}
+          height={48}
+        />
         <div
           className="absolute left-0 right-0 top-0 h-full
           lg:top-12 lg:h-12 
@@ -88,9 +94,11 @@ const Navbar = () => {
             aria-label="Account settings"
             onClick={() => console.log("/account/settings")}
           >
-            <img
+            <Image
               src="/assets/image-avatar.jpg"
               alt="avatar"
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-full cursor-pointer"
             />
           </button>

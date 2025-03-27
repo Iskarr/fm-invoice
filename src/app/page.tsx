@@ -67,7 +67,7 @@ export default function Home() {
     }
   }
 
-  const getStatusStyles = (status: any) => {
+  const getStatusStyles = (status: string) => {
     switch (status) {
       case "Paid":
         return "bg-green-100 text-green-600";
@@ -79,7 +79,7 @@ export default function Home() {
     }
   };
 
-  const getStatusDot = (status: any) => {
+  const getStatusDot = (status: string) => {
     switch (status) {
       case "Paid":
         return "bg-green-500";
@@ -129,8 +129,6 @@ export default function Home() {
       if (!response.ok) {
         throw new Error("Failed to save invoice");
       }
-
-      const result = await response.json();
 
       // Close the form
       setShowInvoiceForm(false);

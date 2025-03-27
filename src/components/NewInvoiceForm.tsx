@@ -30,8 +30,27 @@ interface FormErrors {
   };
   createdAt?: string;
   description?: string;
-  items?: { name?: string; quantity?: string; price?: string }[];
+  items?: Array<{
+    name?: string;
+    quantity?: string;
+    price?: string;
+  }>;
 }
+
+// Type for the form event handlers
+type InputChangeEvent = ChangeEvent<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+>;
+
+// Type for address fields
+type AddressField = keyof Address;
+
+// Type for the onChange handler
+type OnChangeHandler = (
+  e: InputChangeEvent,
+  section?: "senderAddress" | "clientAddress",
+  field?: AddressField
+) => void;
 
 // Form Field Component
 const FormField = ({
@@ -62,14 +81,10 @@ const AddressSection = ({
   formData,
 }: {
   title: string;
-  prefix: string;
+  prefix: "senderAddress" | "clientAddress";
   address: Address;
-  errors: any;
-  onChange: (
-    e: ChangeEvent<HTMLInputElement>,
-    section: string,
-    field: string
-  ) => void;
+  errors: FormErrors;
+  onChange: OnChangeHandler;
   formData?: Invoice;
 }) => (
   <div className="mb-6">
@@ -82,7 +97,7 @@ const AddressSection = ({
             type="text"
             name="clientName"
             value={formData?.clientName || ""}
-            onChange={(e) => onChange(e, "", "")}
+            onChange={(e) => onChange(e)}
             className={`w-full p-2 border ${
               errors?.clientName ? "border-red-500 error-field" : "form-border"
             } rounded-md text-sm`}
@@ -94,7 +109,7 @@ const AddressSection = ({
             type="email"
             name="clientEmail"
             value={formData?.clientEmail || ""}
-            onChange={(e) => onChange(e, "", "")}
+            onChange={(e) => onChange(e)}
             className={`w-full p-2 border ${
               errors?.clientEmail ? "border-red-500 error-field" : "form-border"
             } rounded-md text-sm w-full`}
@@ -126,15 +141,15 @@ const AddressSection = ({
               ? "Post Code"
               : field.charAt(0).toUpperCase() + field.slice(1)
           }
-          error={errors?.[prefix]?.[field]}
+          error={errors?.[prefix]?.[field as keyof Address]}
         >
           <input
             type="text"
             name={`${prefix}${field.charAt(0).toUpperCase() + field.slice(1)}`}
             value={address?.[field as keyof Address] || ""}
-            onChange={(e) => onChange(e, prefix, field)}
+            onChange={(e) => onChange(e, prefix, field as keyof Address)}
             className={`w-full p-2 border ${
-              errors?.[prefix]?.[field]
+              errors?.[prefix]?.[field as keyof Address]
                 ? "border-red-500 error-field"
                 : "form-border"
             } rounded-md text-sm`}
@@ -154,7 +169,7 @@ const ItemList = ({
   onAddItem,
 }: {
   items: InvoiceItem[];
-  errors: any;
+  errors: FormErrors;
   onItemChange: (
     index: number,
     field: keyof InvoiceItem,
@@ -256,9 +271,9 @@ export default function InvoiceForm({
   const [formData, setFormData] = useState<Invoice | null>(null);
   const [paymentTerms, setPaymentTerms] = useState<string>("Net 30 Days");
   const [animateForm, setAnimateForm] = useState<boolean>(false);
-  const [animateOverlay, setAnimateOverlay] = useState<boolean>(false);
+  const [, setAnimateOverlay] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [showErrors, setShowErrors] = useState<boolean>(false);
+  const [, setShowErrors] = useState<boolean>(false);
 
   // Helper to calculate payment due date string from a date string and days
   const calculateDueDate = (dateString: string, days: number): string => {
@@ -367,30 +382,39 @@ export default function InvoiceForm({
     setTimeout(() => onClose(), 300);
   };
 
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-    section?: string,
-    field?: string
-  ) => {
+  const handleInputChange: OnChangeHandler = (e, section?, field?) => {
     if (!formData) return;
 
-    // Clear error for this field when user starts typing
     if (section && field) {
       // Clear nested error
       setErrors((prev) => {
         const newErrors = { ...prev };
-        if (newErrors[section as keyof FormErrors]) {
-          const sectionErrors = {
-            ...(newErrors[section as keyof FormErrors] as Record<
-              string,
-              string
-            >),
+        if (newErrors[section]) {
+          const sectionErrors = { ...newErrors[section] } as {
+            street?: string;
+            city?: string;
+            postCode?: string;
+            country?: string;
           };
           delete sectionErrors[field];
-          newErrors[section as keyof FormErrors] = sectionErrors as any;
+          newErrors[section] = sectionErrors;
         }
         return newErrors;
       });
+
+      // Update form data
+      if (
+        (section === "senderAddress" || section === "clientAddress") &&
+        formData[section]
+      ) {
+        setFormData({
+          ...formData,
+          [section]: {
+            ...formData[section],
+            [field]: e.target.value,
+          },
+        });
+      }
     } else {
       // Clear top-level error
       setErrors((prev) => {
@@ -398,52 +422,13 @@ export default function InvoiceForm({
         delete newErrors[e.target.name as keyof FormErrors];
         return newErrors;
       });
-    }
 
-    if (section && field) {
-      // For nested objects like addresses
-      if (section === "senderAddress" && formData.senderAddress) {
-        setFormData({
-          ...formData,
-          senderAddress: {
-            ...formData.senderAddress,
-            [field]: e.target.value,
-          },
-        });
-      } else if (section === "clientAddress" && formData.clientAddress) {
-        setFormData({
-          ...formData,
-          clientAddress: {
-            ...formData.clientAddress,
-            [field]: e.target.value,
-          },
-        });
-      }
-    } else {
-      // For top-level fields
-      const fieldName = e.target.name;
-      const value = e.target.value;
-
-      // If changing the date, also update the payment due date based on current terms
-      if (fieldName === "createdAt") {
-        const dateString = value; // Direct string from input
-
-        // Extract days from payment terms
-        const days = parseInt(paymentTerms.match(/\d+/)?.[0] || "30");
-        const newDueDate = calculateDueDate(dateString, days);
-
-        setFormData({
-          ...formData,
-          createdAt: dateString,
-          paymentDue: newDueDate,
-        });
-      } else {
-        // For all other fields
-        setFormData({
-          ...formData,
-          [fieldName]: value,
-        });
-      }
+      // Update form data
+      const fieldName = e.target.name as keyof Invoice;
+      setFormData({
+        ...formData,
+        [fieldName]: e.target.value,
+      });
     }
   };
 
@@ -470,28 +455,16 @@ export default function InvoiceForm({
     index: number,
     field: keyof InvoiceItem,
     value: string
-  ) => {
+  ): void => {
     if (!formData) return;
-
-    // Clear item error when user types
-    setErrors((prev) => {
-      const newErrors = { ...prev };
-      if (newErrors.items && newErrors.items[index]) {
-        const itemErrors = { ...newErrors.items[index] };
-        delete itemErrors[field as keyof typeof itemErrors];
-        newErrors.items[index] = itemErrors;
-      }
-      return newErrors;
-    });
 
     const newItems = [...formData.items];
     if (field === "quantity" || field === "price") {
-      newItems[index][field] = parseFloat(value);
+      newItems[index][field] = parseFloat(value) || 0;
     } else {
       newItems[index][field] = value;
     }
 
-    // Recalculate total
     const total = newItems.reduce(
       (sum, item) => sum + item.quantity * item.price,
       0
@@ -500,7 +473,7 @@ export default function InvoiceForm({
     setFormData({
       ...formData,
       items: newItems,
-      total: total,
+      total,
     });
   };
 
@@ -544,8 +517,7 @@ export default function InvoiceForm({
   };
 
   // Validate the form and return true if valid, false otherwise
-  const validateForm = (formData: Invoice, saveAsDraft: boolean): boolean => {
-    // Clear all errors when saving as draft
+  const validateForm = (data: Invoice, saveAsDraft: boolean): boolean => {
     if (saveAsDraft) {
       setErrors({});
       return true;
@@ -555,28 +527,28 @@ export default function InvoiceForm({
     let isValid = true;
 
     // Check sender address
-    if (!formData.senderAddress?.street) {
+    if (!data.senderAddress?.street) {
       newErrors.senderAddress = {
         ...newErrors.senderAddress,
         street: "can't be empty",
       };
       isValid = false;
     }
-    if (!formData.senderAddress?.city) {
+    if (!data.senderAddress?.city) {
       newErrors.senderAddress = {
         ...newErrors.senderAddress,
         city: "can't be empty",
       };
       isValid = false;
     }
-    if (!formData.senderAddress?.postCode) {
+    if (!data.senderAddress?.postCode) {
       newErrors.senderAddress = {
         ...newErrors.senderAddress,
         postCode: "can't be empty",
       };
       isValid = false;
     }
-    if (!formData.senderAddress?.country) {
+    if (!data.senderAddress?.country) {
       newErrors.senderAddress = {
         ...newErrors.senderAddress,
         country: "can't be empty",
@@ -585,42 +557,42 @@ export default function InvoiceForm({
     }
 
     // Check client details
-    if (!formData.clientName) {
+    if (!data.clientName) {
       newErrors.clientName = "can't be empty";
       isValid = false;
     }
 
-    if (!formData.clientEmail) {
+    if (!data.clientEmail) {
       newErrors.clientEmail = "can't be empty";
       isValid = false;
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.clientEmail)) {
+    } else if (!/^\S+@\S+\.\S+$/.test(data.clientEmail)) {
       newErrors.clientEmail = "must be a valid email";
       isValid = false;
     }
 
     // Check client address
-    if (!formData.clientAddress?.street) {
+    if (!data.clientAddress?.street) {
       newErrors.clientAddress = {
         ...newErrors.clientAddress,
         street: "can't be empty",
       };
       isValid = false;
     }
-    if (!formData.clientAddress?.city) {
+    if (!data.clientAddress?.city) {
       newErrors.clientAddress = {
         ...newErrors.clientAddress,
         city: "can't be empty",
       };
       isValid = false;
     }
-    if (!formData.clientAddress?.postCode) {
+    if (!data.clientAddress?.postCode) {
       newErrors.clientAddress = {
         ...newErrors.clientAddress,
         postCode: "can't be empty",
       };
       isValid = false;
     }
-    if (!formData.clientAddress?.country) {
+    if (!data.clientAddress?.country) {
       newErrors.clientAddress = {
         ...newErrors.clientAddress,
         country: "can't be empty",
@@ -629,22 +601,22 @@ export default function InvoiceForm({
     }
 
     // Check invoice details
-    if (!formData.createdAt) {
+    if (!data.createdAt) {
       newErrors.createdAt = "can't be empty";
       isValid = false;
     }
 
-    if (!formData.description) {
+    if (!data.description) {
       newErrors.description = "can't be empty";
       isValid = false;
     }
 
     // Check items
-    if (formData.items.length === 0) {
+    if (data.items.length === 0) {
       newErrors.items = [{}]; // Empty object to trigger error styling
       isValid = false;
     } else {
-      const itemErrors = formData.items.map((item) => {
+      const itemErrors = data.items.map((item) => {
         const itemError: { name?: string; quantity?: string; price?: string } =
           {};
 
@@ -672,28 +644,26 @@ export default function InvoiceForm({
     return isValid;
   };
 
-  const handleSubmit = async (e: FormEvent, saveAsDraft = false) => {
+  const handleSubmit = (
+    e: FormEvent<HTMLFormElement>,
+    saveAsDraft = false
+  ): void => {
     e.preventDefault();
     if (!formData) return;
 
-    // Validate form if not saving as draft
     const isValid = validateForm(formData, saveAsDraft);
-    setShowErrors(!saveAsDraft); // Only show errors if not saving as draft
+    setShowErrors(!saveAsDraft);
 
-    if (!isValid) {
-      // Scroll to the first error
+    if (!isValid && !saveAsDraft) {
       const firstErrorElement = document.querySelector(".error-field");
-      if (firstErrorElement) {
-        firstErrorElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
+      firstErrorElement?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       return;
     }
 
-    // Use dates as they are - strings from the input
-    const formattedInvoice = {
+    const formattedInvoice: Invoice = {
       ...formData,
       status: saveAsDraft
         ? "draft"
@@ -702,7 +672,6 @@ export default function InvoiceForm({
         : formData.status,
     };
 
-    // Call the parent's onSave method with the updated invoice
     onSave(formattedInvoice, saveAsDraft);
   };
 
@@ -710,20 +679,15 @@ export default function InvoiceForm({
   const generateInvoiceId = (): string => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const numbers = "0123456789";
-
-    let id = "";
-
-    // Add 2 random letters
-    for (let i = 0; i < 2; i++) {
-      id += letters.charAt(Math.floor(Math.random() * letters.length));
-    }
-
-    // Add 4 random numbers
-    for (let i = 0; i < 4; i++) {
-      id += numbers.charAt(Math.floor(Math.random() * numbers.length));
-    }
-
-    return id;
+    return Array(2)
+      .fill(0)
+      .map(() => letters[Math.floor(Math.random() * letters.length)])
+      .concat(
+        Array(4)
+          .fill(0)
+          .map(() => numbers[Math.floor(Math.random() * numbers.length)])
+      )
+      .join("");
   };
 
   if (!showForm || !formData) {
@@ -869,7 +833,14 @@ export default function InvoiceForm({
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={(e) => handleSubmit(e, true)}
+                    onClick={() =>
+                      handleSubmit(
+                        new Event(
+                          "submit"
+                        ) as unknown as FormEvent<HTMLFormElement>,
+                        true
+                      )
+                    }
                     className="save-as-draft-button flex-1 py-4 rounded-3xl font-bold"
                   >
                     Save as Draft
@@ -895,7 +866,14 @@ export default function InvoiceForm({
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={(e) => handleSubmit(e, true)}
+                    onClick={() =>
+                      handleSubmit(
+                        new Event(
+                          "submit"
+                        ) as unknown as FormEvent<HTMLFormElement>,
+                        true
+                      )
+                    }
                     className="save-as-draft-button py-4 px-6 rounded-3xl font-bold"
                   >
                     Save as Draft
