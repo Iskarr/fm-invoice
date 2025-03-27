@@ -9,6 +9,7 @@ import NoInvoice from "@/components/NoInvoice";
 import FilterComponent from "@/components/FilterComponent";
 import NewInvoiceForm from "@/components/NewInvoiceForm"; // Import the InvoiceForm component
 import { Invoice } from "@/types";
+import { getInvoices, createInvoice } from "./api";
 
 export default function Home() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -21,11 +22,10 @@ export default function Home() {
   const fetchInvoices = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/api/invoices");
-      if (!response.ok) {
+      const data = await getInvoices();
+      if (!data) {
         throw new Error("Failed to fetch invoices");
       }
-      const data = await response.json();
       setInvoices(data);
       setFilteredInvoices(data); // Update filtered invoices as well
       setIsLoading(false);
@@ -114,19 +114,9 @@ export default function Home() {
         status: saveAsDraft ? "draft" : "pending",
       };
 
-      // API call to save the invoice
-      const response = await fetch(
-        "http://localhost:3001/api/invoices/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(invoiceToSave),
-        }
-      );
-
-      if (!response.ok) {
+      // Use the createInvoice function from our API module
+      const response = await createInvoice(JSON.stringify(invoiceToSave));
+      if (!response) {
         throw new Error("Failed to save invoice");
       }
 

@@ -193,6 +193,7 @@ input {
 
 [data-theme="dark"] .form-background {
   background-color: var(--dark-1);
+  color: var(--gray-4);
 }
 
 /* form borders */

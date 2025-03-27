@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 import { InvoiceIdProps, Invoice } from "@/types";
 import InvoiceEditForm from "@/components/InvoiceEditForm"; // Import the new component
+import { getInvoice, updateInvoice, deleteInvoice } from "@/app/api";
 
 export default function DetailPage({ params }: InvoiceIdProps) {
   const router = useRouter();
@@ -23,13 +24,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3001/api/invoices/${id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch invoice");
-        }
-        const data = await response.json();
+        const data = await getInvoice(id);
         setInvoice(data);
         setLoading(false);
       } catch (error) {
@@ -51,19 +46,8 @@ export default function DetailPage({ params }: InvoiceIdProps) {
   };
 
   const handleMarkAsPaid = async () => {
-    console.log("Mark as paid");
-    // Implementation would go here
     try {
-      const response = await fetch(`http://localhost:3001/api/invoices/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: "paid" }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to mark as paid");
-      }
+      await updateInvoice(id, JSON.stringify({ status: "paid" }));
       router.push("/");
     } catch (error) {
       console.error("Error marking as paid:", error);
@@ -76,12 +60,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
 
   const handleConfirmDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/invoices/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete invoice");
-      }
+      await deleteInvoice(id);
       router.push("/");
     } catch (error) {
       console.error("Error deleting invoice:", error);
@@ -97,19 +76,8 @@ export default function DetailPage({ params }: InvoiceIdProps) {
   };
 
   const handleSaveInvoice = async (updatedInvoice: Invoice) => {
-    // Implement the API call to update the invoice
-    console.log("Saving changes", updatedInvoice);
     try {
-      const response = await fetch(`http://localhost:3001/api/invoices/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedInvoice),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to update invoice");
-      }
+      await updateInvoice(id, JSON.stringify(updatedInvoice));
       router.push("/");
     } catch (error) {
       console.error("Error updating invoice:", error);
