@@ -377,7 +377,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
               <div className="bg-details-colors-total p-6 rounded-b-lg text-white flex justify-between items-center">
                 <span className="text-sm">Grand Total</span>
                 <span className="text-xl font-bold">
-                  £{(invoice.total || 0).toFixed(2)}
+                  £ {(invoice.total || 0).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -450,7 +450,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
             <div className="bg-[#373B53] p-8 rounded-b-lg text-white flex justify-between items-center bg-details-colors-total">
               <span className="text-sm">Grand Total</span>
               <span className="text-xl font-bold">
-                £{(invoice.total || 0).toFixed(2)}
+                £ {(invoice.total || 0).toFixed(2)}
               </span>
             </div>
           </div>
