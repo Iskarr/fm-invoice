@@ -47,8 +47,29 @@ export default function DetailPage({ params }: InvoiceIdProps) {
 
   const handleMarkAsPaid = async () => {
     try {
-      await updateInvoice(id, JSON.stringify({ status: "paid" }));
-      router.push("/");
+      const response = await fetch(
+        `https://fm-invoice-backend.onrender.com/api/invoices/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: "paid" }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to mark invoice as paid");
+      }
+
+      // Get the updated invoice data
+      const updatedInvoice = await response.json();
+
+      // Update the local state with the new data
+      setInvoice(updatedInvoice);
+
+      // Force a router refresh
+      router.push(`/`);
     } catch (error) {
       console.error("Error marking as paid:", error);
     }
@@ -104,7 +125,8 @@ export default function DetailPage({ params }: InvoiceIdProps) {
     }
   };
 
-  function capitalizeFirstLetter(str: string) {
+  function capitalizeFirstLetter(str: string | undefined) {
+    if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
@@ -355,7 +377,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
               <div className="bg-details-colors-total p-6 rounded-b-lg text-white flex justify-between items-center">
                 <span className="text-sm">Grand Total</span>
                 <span className="text-xl font-bold">
-                  £{invoice.total.toFixed(2)}
+                  £{(invoice.total || 0).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -428,7 +450,7 @@ export default function DetailPage({ params }: InvoiceIdProps) {
             <div className="bg-[#373B53] p-8 rounded-b-lg text-white flex justify-between items-center bg-details-colors-total">
               <span className="text-sm">Grand Total</span>
               <span className="text-xl font-bold">
-                £ {invoice.total.toFixed(2)}
+                £{(invoice.total || 0).toFixed(2)}
               </span>
             </div>
           </div>
