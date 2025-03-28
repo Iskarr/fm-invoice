@@ -20,12 +20,15 @@ export default function Home() {
 
   // Create a reusable function to fetch invoices
   const fetchInvoices = useCallback(async () => {
-    setIsLoading(true);
     try {
-      const data = await getInvoices();
-      if (!data) {
+      setIsLoading(true);
+      const response = await fetch(
+        "https://fm-invoice-backend.onrender.com/api/invoices"
+      );
+      if (!response.ok) {
         throw new Error("Failed to fetch invoices");
       }
+      const data = await response.json();
       setInvoices(data);
       setFilteredInvoices(data); // Update filtered invoices as well
       setIsLoading(false);
@@ -114,9 +117,19 @@ export default function Home() {
         status: saveAsDraft ? "draft" : "pending",
       };
 
-      // Use the createInvoice function from our API module
-      const response = await createInvoice(JSON.stringify(invoiceToSave));
-      if (!response) {
+      // API call to save the invoice using localhost endpoint
+      const response = await fetch(
+        "https://fm-invoice-backend.onrender.com/api/invoices/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(invoiceToSave),
+        }
+      );
+
+      if (!response.ok) {
         throw new Error("Failed to save invoice");
       }
 
@@ -127,7 +140,7 @@ export default function Home() {
       fetchInvoices();
     } catch (error) {
       console.error("Error saving invoice:", error);
-      // You might want to add error handling or user notification here
+      // Handle error appropriately
     }
   };
 

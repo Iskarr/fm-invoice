@@ -77,10 +77,30 @@ export default function DetailPage({ params }: InvoiceIdProps) {
 
   const handleSaveInvoice = async (updatedInvoice: Invoice) => {
     try {
-      await updateInvoice(id, JSON.stringify(updatedInvoice));
-      router.push("/");
+      const response = await fetch(
+        `https://fm-invoice-backend.onrender.com/api/invoices/edit/${updatedInvoice.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedInvoice),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update invoice");
+      }
+
+      // Close the form
+      setShowEditForm(false);
+
+      // Refresh the invoice data
+      const data = await response.json();
+      setInvoice(data);
     } catch (error) {
       console.error("Error updating invoice:", error);
+      // Handle error appropriately
     }
   };
 

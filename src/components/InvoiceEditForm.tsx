@@ -30,7 +30,12 @@ export default function InvoiceEditForm({
 
       // Set payment terms based on the invoice if available
       if (invoice.paymentTerms) {
-        setPaymentTerms(invoice.paymentTerms);
+        // Convert number to string format if needed
+        const terms =
+          typeof invoice.paymentTerms === "number"
+            ? `Net ${invoice.paymentTerms} Days`
+            : invoice.paymentTerms;
+        setPaymentTerms(terms);
       }
     }
   }, [invoice]);
@@ -115,7 +120,7 @@ export default function InvoiceEditForm({
     if (field === "quantity" || field === "price") {
       newItems[index][field] = parseFloat(value);
     } else {
-      newItems[index][field] = value;
+      newItems[index][field] = value as never;
     }
 
     // Recalculate total
@@ -136,7 +141,10 @@ export default function InvoiceEditForm({
 
     setEditedInvoice({
       ...editedInvoice,
-      items: [...editedInvoice.items, { name: "", quantity: 1, price: 0 }],
+      items: [
+        ...editedInvoice.items,
+        { name: "", quantity: 1, price: 0, total: 0 },
+      ],
     });
   };
 
@@ -159,18 +167,106 @@ export default function InvoiceEditForm({
     });
   };
 
+  // Helper to calculate payment due date string from a date string and days
+  const calculateDueDate = (dateString: string, days: number): string => {
+    if (!dateString) return "";
+
+    const parts = dateString.split("-");
+    if (parts.length !== 3) return "";
+
+    const tempDate = new Date(
+      parseInt(parts[0]),
+      parseInt(parts[1]) - 1,
+      parseInt(parts[2])
+    );
+    tempDate.setDate(tempDate.getDate() + days);
+
+    const year = tempDate.getFullYear();
+    const month = String(tempDate.getMonth() + 1).padStart(2, "0");
+    const day = String(tempDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const handlePaymentTermsChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    if (!editedInvoice) return;
+
+    const terms = e.target.value;
+    setPaymentTerms(terms);
+
+    // Update payment due date based on selected terms
+    const days = parseInt(terms.split(" ")[1]);
+    const dueDate = calculateDueDate(editedInvoice.createdAt || "", days);
+
+    setEditedInvoice({
+      ...editedInvoice,
+      paymentTerms: terms,
+      paymentDue: dueDate,
+    });
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!editedInvoice) return;
 
-    // Update payment terms in the invoice
-    const updatedInvoice = {
-      ...editedInvoice,
-      paymentTerms: paymentTerms,
-    };
+    try {
+      // Get the number of days from the payment terms string
+      const days = parseInt(paymentTerms.split(" ")[1]);
+      const dueDate = calculateDueDate(editedInvoice.createdAt || "", days);
 
-    // Call the parent's onSave method with the updated invoice
-    onSave(updatedInvoice);
+      // Create the update payload without id field
+      const { id, ...updatePayload } = {
+        ...editedInvoice,
+        paymentTerms: paymentTerms, // This is already in the correct string format
+        paymentDue: dueDate,
+      };
+
+      // Convert paymentTerms to number before sending to API
+      const apiPayload = {
+        ...updatePayload,
+        paymentTerms: parseInt(paymentTerms.split(" ")[1]),
+      };
+
+      console.log("Sending update payload:", apiPayload);
+
+      const response = await fetch(
+        `https://fm-invoice-backend.onrender.com/api/invoices/${editedInvoice.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(apiPayload),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        console.error("API Error Response:", {
+          status: response.status,
+          statusText: response.statusText,
+          errorData: responseData,
+        });
+        throw new Error(
+          `Failed to update invoice: ${response.status} ${response.statusText}`
+        );
+      }
+
+      console.log("Successfully updated invoice:", responseData);
+
+      // Call the parent's onSave method with the updated invoice
+      onSave(responseData);
+
+      // Close the form
+      handleCloseEditForm();
+
+      // Redirect to the invoices page
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error updating invoice:", error);
+      // You might want to show an error message to the user here
+    }
   };
 
   if (!showEditForm || !editedInvoice) {
@@ -396,7 +492,7 @@ export default function InvoiceEditForm({
               <select
                 name="paymentTerms"
                 value={paymentTerms}
-                onChange={(e) => setPaymentTerms(e.target.value)}
+                onChange={handlePaymentTermsChange}
                 className="w-full p-2 border border-gray-200 rounded-md text-sm"
               >
                 <option value="Net 1 Day">Net 1 Day</option>

@@ -303,13 +303,14 @@ export default function InvoiceForm({
   // Initialize the form when opened
   useEffect(() => {
     if (isNewInvoice) {
-      // Create empty invoice template for new invoice with today's date string
-      // const todayString = getTodayString();
+      // Get today's date in YYYY-MM-DD format
+      const today = new Date();
+      const todayString = today.toISOString().split("T")[0];
 
       const newInvoice: Invoice = {
         id: generateInvoiceId(),
-        createdAt: "",
-        paymentDue: calculateDueDate("", 30),
+        createdAt: todayString,
+        paymentDue: calculateDueDate(todayString, 30),
         description: "",
         paymentTerms: "Net 30 Days",
         clientName: "",

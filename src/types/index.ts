@@ -4,33 +4,34 @@ interface InvoiceIdProps {
   }>;
 }
 
-interface InvoiceItem {
-  name: string;
-  quantity: number;
-  price: number;
+export interface Invoice {
+  _id: string; // MongoDB _id field
+  id: string; // Display ID
+  createdAt: string;
+  paymentDue: string;
+  description: string;
+  paymentTerms: string;
+  clientName: string;
+  clientEmail: string;
+  status: string;
+  senderAddress: Address;
+  clientAddress: Address;
+  items: InvoiceItem[];
+  total: number;
 }
 
-interface Address {
+export interface Address {
   street: string;
   city: string;
   postCode: string;
   country: string;
 }
 
-interface Invoice {
-  id: string;
-  $id?: string;
-  paymentDue: string;
-  clientName: string;
-  status: string;
-  createdAt?: string;
-  description?: string;
-  paymentTerms?: string;
-  clientEmail?: string;
-  clientAddress?: Address;
-  senderAddress?: Address;
-  items: InvoiceItem[];
+export interface InvoiceItem {
+  name: string;
+  quantity: number;
+  price: number;
   total: number;
 }
 
-export type { InvoiceIdProps, InvoiceItem, Address, Invoice };
+export type { InvoiceIdProps };
